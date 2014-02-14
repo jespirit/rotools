@@ -97,11 +97,11 @@ if (!isset($_POST["submit"]))
 $percentrefinery = 
     array(
         //       +1   +2   +3   +4   +5   +6   +7   +8  +9  +10
-        array(0, 100, 100, 100, 100, 60,  40,  40,  20, 20, 10),
-        array(0, 100, 100, 100, 100, 100, 100, 100, 60, 40, 20),
-        array(0, 100, 100, 100, 100, 100, 100, 60,  40, 20, 20),
-        array(0, 100, 100, 100, 100, 100, 60,  50,  20, 20, 20),
-        array(0, 100, 100, 100, 100, 60,  40,  40,  20, 20, 10),
+        array(4, 100, 100, 100, 100, 60,  40,  40,  20, 20, 10),
+        array(7, 100, 100, 100, 100, 100, 100, 100, 60, 40, 20),
+        array(6, 100, 100, 100, 100, 100, 100, 60,  40, 20, 20),
+        array(5, 100, 100, 100, 100, 100, 60,  50,  20, 20, 20),
+        array(4, 100, 100, 100, 100, 60,  40,  40,  20, 20, 10),
     );
    
 $service_fees = array(2000, 50, 200, 5000, 20000);
@@ -168,7 +168,7 @@ if (!$valid) {
 
 $count = 0;
 $elu_num = 0;
-$equip_refine = 0;
+$equip_refine = $percentrefinery[$wlvl][0];
 $service_cost = 0;
 $num_equips = 1;
 $total = 0;
@@ -179,13 +179,13 @@ print_table();
 
 do
 {
-    if (rand(0, 99) < $percentrefinery[$wlvl][$equip_refine+1]) {
+    if (rand(0, 99) < $percentrefinery[$wlvl][$equip_refine]) {
         $equip_refine++;
         print "Success. You made a +$equip_refine $eqname <br />";
     }
     else {
         print "Failure. You broke it at +$equip_refine <br />";
-        $equip_refine = 0;
+        $equip_refine = $percentrefinery[$wlvl][0];;
         $num_equips++;
     }
     
