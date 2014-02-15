@@ -205,15 +205,17 @@ else {
 			   
 			   (100-x1)/100 * (100-x2)/100 * (100-x3)/100 etc...
 			   
-			   where x is the percentage of a drop from slot 1 onward
+			   where x is the percentage of a drop from slot 1 onward (needs to be 10000-x1/10000)
 			 */
 			 
+            // only allowed to steal up to the 6th slot
 			if ($i >= $MAX_STEAL_DROP)
 				continue;
 			
 			// Note: 100^4 = (10^2)^4 = 10^8 100 million so any results after the 3rd item is meaningless (or not).
 			// Most likely doubles are being used in the equations.
 			$drop['sper'] = ($total_chance * $drop['adj']/100) / pow(100, $i+1);
+            // total_chance is the accumulated dividend across items
 			$total_chance *= (($drop['adj'] < 10000) ? 10000-$drop['adj'] : 10000)/100;
 			
 			//printf("chance=%d\n", $total_chance);
