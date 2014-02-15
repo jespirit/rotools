@@ -162,22 +162,23 @@ else {
 	// Base skill success chance
 	$rate = ($dex - $monster_dex)/2 + $steallvl*6 + 4;
 
+    // There is no cap on steal rate, can be +100%
 	if ($rate < 1)
 		$rate = 0;
 	
 	$drops = array(
-			//    0                       1                         2          3           4
-			//    drop id,                drop %,                   drop name, drop count, drop price
-			array('id'=>$line['Drop1id'], 'per'=>$line['Drop1per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'sell'=>0),
-			array('id'=>$line['Drop2id'], 'per'=>$line['Drop2per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'sell'=>0),
-			array('id'=>$line['Drop3id'], 'per'=>$line['Drop3per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'sell'=>0),
-			array('id'=>$line['Drop4id'], 'per'=>$line['Drop4per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'sell'=>0),
-			array('id'=>$line['Drop5id'], 'per'=>$line['Drop5per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'sell'=>0),
-			array('id'=>$line['Drop6id'], 'per'=>$line['Drop6per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'sell'=>0),
-			array('id'=>$line['Drop7id'], 'per'=>$line['Drop7per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'sell'=>0),
-			array('id'=>$line['Drop8id'], 'per'=>$line['Drop8per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'sell'=>0),
-			array('id'=>$line['Drop9id'], 'per'=>$line['Drop9per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'sell'=>0),
-			array('id'=>$line['DropCardid'], 'per'=>$line['DropCardper'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'sell'=>0),
+			//    0                       1                         2          3           4         5           6
+			//    drop id,                drop %,                   adjusted   steal %     item name total       selling price
+			array('id'=>$line['Drop1id'], 'per'=>$line['Drop1per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'total'=>0, 'sell'=>0),
+			array('id'=>$line['Drop2id'], 'per'=>$line['Drop2per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'total'=>0, 'sell'=>0),
+			array('id'=>$line['Drop3id'], 'per'=>$line['Drop3per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'total'=>0, 'sell'=>0),
+			array('id'=>$line['Drop4id'], 'per'=>$line['Drop4per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'total'=>0, 'sell'=>0),
+			array('id'=>$line['Drop5id'], 'per'=>$line['Drop5per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'total'=>0, 'sell'=>0),
+			array('id'=>$line['Drop6id'], 'per'=>$line['Drop6per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'total'=>0, 'sell'=>0),
+			array('id'=>$line['Drop7id'], 'per'=>$line['Drop7per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'total'=>0, 'sell'=>0),
+			array('id'=>$line['Drop8id'], 'per'=>$line['Drop8per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'total'=>0, 'sell'=>0),
+			array('id'=>$line['Drop9id'], 'per'=>$line['Drop9per'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'total'=>0, 'sell'=>0),
+			array('id'=>$line['DropCardid'], 'per'=>$line['DropCardper'], 'adj'=>0, 'sper'=>0, 'name'=>"", 'count'=>0, 'total'=>0, 'sell'=>0),
 		);
 		
 	$total_chance = 1;
@@ -218,7 +219,7 @@ else {
             // total_chance is the accumulated dividend across items (100-x1) * (100-x2) * (100-x3) ...
 			$total_chance *= (($drop['adj'] < 10000) ? 10000-$drop['adj'] : 10000)/100;
 			
-			printf("chance=%f / adj=%f\n", $total_chance, pow(100, $i+1));
+			//printf("chance=%f / adj=%f\n", $total_chance, pow(100, $i+1));
 			
 			//printf("%d %.2f%% %.3f%% %s %d\n", $drop['id'], $drop['per']/100, $drop['sper']*100, $drop['name'], $drop['sell']);
 			
@@ -233,6 +234,7 @@ else {
 	$N = 100;
 	$final_total = 0;
 	$total_avg = 0;
+    $total_count = 0;
 	
 	set_time_limit(0);
 	
@@ -259,16 +261,22 @@ else {
 				continue;
 				
 			$count++;
-			$drops[$i]['count']++;
+			$drops[$i]['count']++;  // running total of how many you have per drop
 		}
 		
 		$total = 0;
-		
-		foreach ($drops as $key=>$drop) {
+        
+		foreach ($drops as $key=>&$drop) {
+            printf("count=%d,", $drop['count']);
+            
+            $drop['total'] += $drop['count'];  // keep track of total over all runs
+            printf("total=%d,", $drop['total']);
 			if ($drop['id'] > 0) {
 				$total += $drop['count'] * $drop['sell'];
 			}
 		}
+        
+        printf("\n");
 		
 		$final_total += $total;
 	}
@@ -285,17 +293,17 @@ else {
 	
 	print "<table>".
 	      "<tr>".
-		  "<th>Name</th><th>Drop Chance (%)</th><th>Adjusted %</th><th>Steal %</th><th># Total</th><th>Sell</th>";
+		  "<th>Name</th><th>Drop Chance (%)</th><th>Adjusted %</th><th>Steal %</th><th># Total (Avg)</th><th>Sell</th>";
 	foreach ($drops as $key=>$drop) {
 		if (!($drop['id'] > 0))
 			continue;
 
 		printf("<tr>");
 		printf("<td>%s</td><td>%.2f%%</td><td>%.2f%%</td><td>%.3f%%</td><td>%d</td><td>%s</td>", 
-			$drop['name'], $drop['per']/100, $drop['adj']/100, $drop['sper']*100, $drop['count'], number_format($drop['sell']));
+			$drop['name'], $drop['per']/100, $drop['adj']/100, $drop['sper']*100, floor($drop['total']/$N), number_format($drop['sell']));
 		printf("</td></tr>");
 	}
-	printf("<tr><td>Total</td><td>%s</td></tr>", number_format($total));
+	printf("<tr><td>Total</td><td>%s</td></tr>", number_format($total_avg));
 	print "</table>";
 	
 	print "</pre>";
