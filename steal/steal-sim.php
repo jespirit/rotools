@@ -208,17 +208,16 @@ else {
 			   where x is the percentage of a drop from slot 1 onward (needs to be 10000-x1/10000)
 			 */
 			 
-            // only allowed to steal up to the 6th slot
+            // only allowed to steal up to the 7th slot
 			if ($i >= $MAX_STEAL_DROP)
 				continue;
 			
 			// Note: 100^4 = (10^2)^4 = 10^8 100 million so any results after the 3rd item is meaningless (or not).
-			// Most likely doubles are being used in the equations.
 			$drop['sper'] = ($total_chance * $drop['adj']/100) / pow(100, $i+1);
-            // total_chance is the accumulated dividend across items
+            // total_chance is the accumulated dividend across items (100-x1) * (100-x2) * (100-x3) ...
 			$total_chance *= (($drop['adj'] < 10000) ? 10000-$drop['adj'] : 10000)/100;
 			
-			//printf("chance=%d\n", $total_chance);
+			printf("chance=%f / adj=%f\n", $total_chance, pow(100, $i+1));
 			
 			//printf("%d %.2f%% %.3f%% %s %d\n", $drop['id'], $drop['per']/100, $drop['sper']*100, $drop['name'], $drop['sell']);
 			
@@ -239,7 +238,7 @@ else {
 	for ($n=0; $n<$N; $n++) {
 		$steal_attempts = 0;
 		
-		// Reset count total.
+		// Reset count total for each item.
 		foreach ($drops as $key=>&$drop) {
 			if ($drop['id'] > 0)
 				$drop['count'] = 0;
@@ -250,7 +249,7 @@ else {
 		for ($count = 0; $count < $num_monsters; ) {
 			// Try dropping an item in order from first to last possible slot.
 			for ($i = 0; $i < $MAX_STEAL_DROP; $i++) {
-				if ($drops[$i]['id'] > 0 && rand(0,10000-1) < $drops[$i]['per'] * $rate/100)
+				if ($drops[$i]['id'] > 0 && rand(0,10000-1) < $drops[$i]['adj'])
 					break;
 			}
 			
