@@ -275,6 +275,7 @@ else {
 				$total += $drop['count'] * $drop['sell'];
 			}
 		}
+        unset($drop);
 		
 		$final_total += $total;
 	}
