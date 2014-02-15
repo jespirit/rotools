@@ -185,6 +185,7 @@ else {
 	// Save the record as a REPLACE statement
 	$sql_replace = sprintf("REPLACE INTO mob_db VALUES(%s)\n", $output);
 	
+    // The REPLACE statement can be used to restore the record to a previous state.
 	fputs($fp, $sql_replace);
 	
 	// Overwrite the old values with the new values.
@@ -204,8 +205,7 @@ else {
 	if ($pos != false)
 		$update = substr($update, 0, $pos);
 		
-	$update = $update . sprintf(" WHERE ID='%d';", $monsterid);
-	$sql_update = "UPDATE mob_db SET " . $update;
+	$sql_update = "UPDATE mob_db SET " . $update . sprintf(" WHERE ID='%d';", $monsterid);
 	
 	print "$sql_update\n";
 	
