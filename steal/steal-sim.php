@@ -130,8 +130,6 @@ else if (!preg_match("/$isnumeric/", $dex) || $dex < 0) {
 	exit();
 }
 
-
-
 $i = 0;
 $table1 = "mob_db";
 	
@@ -198,6 +196,7 @@ else {
 			if ($drop['per'] > 10000)	// Limit to 100%
 				$drop['per'] = 10000;
 				
+            // The drop rate is reduced by the player's steal rate.
 			$drop['adj'] = floor($drop['per'] * $rate/100);
 			
 			/* To calculate the percentage to steal a drop, for instance, to steal
@@ -212,7 +211,7 @@ else {
 			if ($i >= $MAX_STEAL_DROP)
 				continue;
 			
-			// Note: 100^4 = 1 billion so any results after the 3rd item is meaningless (or not).
+			// Note: 100^4 = (10^2)^4 = 10^8 100 million so any results after the 3rd item is meaningless (or not).
 			// Most likely doubles are being used in the equations.
 			$drop['sper'] = ($total_chance * $drop['adj']/100) / pow(100, $i+1);
 			$total_chance *= (($drop['adj'] < 10000) ? 10000-$drop['adj'] : 10000)/100;
