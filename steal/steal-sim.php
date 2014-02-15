@@ -212,7 +212,8 @@ else {
 			if ($i >= $MAX_STEAL_DROP)
 				continue;
 			
-			// Note: 100^4 = (10^2)^4 = 10^8 100 million so any results after the 3rd item is meaningless (or not).
+			// Calculate the steal percent or 'sper' the percentage is calculated
+            // later as when it needs to be displayed by multiplying by 100
 			$drop['sper'] = ($total_chance * $drop['adj']/100) / pow(100, $i+1);
             // total_chance is the accumulated dividend across items (100-x1) * (100-x2) * (100-x3) ...
 			$total_chance *= (($drop['adj'] < 10000) ? 10000-$drop['adj'] : 10000)/100;
