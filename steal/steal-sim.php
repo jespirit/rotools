@@ -289,10 +289,7 @@ else {
 	printf("Monster's DEX: %d\n", $monster_dex);
 	printf("Steal Skill Chance: %d%%\n", $rate);
 	printf("Steal Attempts: %d", $steal_attempts);
-	
-    //$r = $drops[9];
-    //printf("\n%d,%s,%d\n", $r['id'], $r['name'], $r['per']);
-    
+
 	print "<table>".
 	      "<tr>".
 		  "<th>ID</th><th>Name</th><th>Drop Chance (%)</th><th>Adjusted %</th><th>Steal %</th><th># Total (Avg)</th><th>Sell</th>";
