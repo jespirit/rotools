@@ -162,7 +162,7 @@ else {
 	// Base skill success chance
 	$rate = ($dex - $monster_dex)/2 + $steallvl*6 + 4;
 
-    // There is no cap on steal rate, can be +100%
+    // There is no cap on steal rate, can be +100%.
 	if ($rate < 1)
 		$rate = 0;
 	
@@ -267,16 +267,14 @@ else {
 		$total = 0;
         
 		foreach ($drops as $key=>&$drop) {
-            printf("count=%d,", $drop['count']);
+            //printf("count=%d,", $drop['count']);
             
             $drop['total'] += $drop['count'];  // keep track of total over all runs
-            printf("total=%d,", $drop['total']);
+            //printf("total=%d,", $drop['total']);
 			if ($drop['id'] > 0) {
 				$total += $drop['count'] * $drop['sell'];
 			}
 		}
-        
-        printf("\n");
 		
 		$final_total += $total;
 	}
