@@ -208,7 +208,7 @@ else {
 			   
 			   where x is the percentage of a drop from slot 1 onward (needs to be 10000-x1/10000)
 			 */
-			 
+             
             // only allowed to steal up to the 7th slot
 			if ($i >= $MAX_STEAL_DROP)
 				continue;
@@ -278,7 +278,7 @@ else {
 		
 		$final_total += $total;
 	}
-	
+
 	$total_avg = floor($final_total/$N);
 	
 	printf("Runs: %d, Total Monsters: %d\n", $N, $num_monsters);
@@ -289,16 +289,17 @@ else {
 	printf("Steal Skill Chance: %d%%\n", $rate);
 	printf("Steal Attempts: %d", $steal_attempts);
 	
+    //$r = $drops[9];
+    //printf("\n%d,%s,%d\n", $r['id'], $r['name'], $r['per']);
+    
 	print "<table>".
 	      "<tr>".
-		  "<th>Name</th><th>Drop Chance (%)</th><th>Adjusted %</th><th>Steal %</th><th># Total (Avg)</th><th>Sell</th>";
+		  "<th>ID</th><th>Name</th><th>Drop Chance (%)</th><th>Adjusted %</th><th>Steal %</th><th># Total (Avg)</th><th>Sell</th>";
 	foreach ($drops as $key=>$drop) {
-		if (!($drop['id'] > 0))
-			continue;
 
 		printf("<tr>");
-		printf("<td>%s</td><td>%.2f%%</td><td>%.2f%%</td><td>%.3f%%</td><td>%d</td><td>%s</td>", 
-			$drop['name'], $drop['per']/100, $drop['adj']/100, $drop['sper']*100, floor($drop['total']/$N), number_format($drop['sell']));
+		printf("<td>%d</td><td>%s</td><td>%.2f%%</td><td>%.2f%%</td><td>%.3f%%</td><td>%d</td><td>%s</td>", 
+			$drop['id'], $drop['name'], $drop['per']/100, $drop['adj']/100, $drop['sper']*100, floor($drop['total']/$N), number_format($drop['sell']));
 		printf("</td></tr>");
 	}
 	printf("<tr><td>Total</td><td>%s</td></tr>", number_format($total_avg));
