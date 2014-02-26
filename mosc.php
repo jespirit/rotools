@@ -45,7 +45,9 @@ $keys = array("mirrors", "roses", "bherbs");
 $data = array(
             "mirrors" => array($_POST["mirrors"], "Crystal Mirror", "/images/747.gif", 7500),
             "roses"   => array($_POST["roses"], "Witherless Rose", "/images/748.gif", 27500),
-			"bherbs"  => array($_POST["bherbs"], "Blue Herb", "/images/510.gif", 2768),	// 3100 - 332
+			"bherbs"  => array($_POST["bherbs"], "Blue Herb", "/images/510.gif", 3100),	// 3100 - (319 + 10 + 6)
+                                                                                        // 3100 - 335
+                                                                                        // 2765
         );
         
 print "<table border='1' cellpadding='10' >" .
@@ -56,6 +58,7 @@ print "<table border='1' cellpadding='10' >" .
 foreach ($keys as $k=>$v) {
     # round value with sprintf
     $value = sprintf("%d", $data[$v][3] * (100 + $overcharge[$skilllvl-1]) / 100);  # overcharge value
+    $value -= ($v == "bherbs") ? 335 : 0;
     $zeny = $value * $data[$v][0];   # amount * overcharge value
     $total += $zeny;
     
@@ -63,54 +66,22 @@ foreach ($keys as $k=>$v) {
     $zenyfm = "&nbsp;";
     
     if ($zeny > 0)
-        $zenyfm = get_currency($zeny);    # format_zeny($zeny);
+        $zenyfm = number_format($zeny);    # format_zeny($zeny);
     
     print "<tr>" .
           "<td><img src='" . $data[$v][2] . "' alt='" . $data[$v][1] . "' width='24' height='24' /></td>" .
           "<td>$amount</td>" .
-          "<td>". get_currency($value) ."</td>" .
+          "<td>". number_format($value) ."</td>" .
           "<td>$zenyfm</td>" .
           "</tr>";
 }
 
 print "<tr>" .
       "<td>Total</td>" .
-      "<td colspan='3' align='right'>" . get_currency($total) . "</td>" .
+      "<td colspan='3' align='right'>" . number_format($total) . "</td>" .
       "</tr>";
 
 print "</table>";
-
-/*
-# format zeny into money
-# ie 999,999,999
-function format_zeny($zeny) {
-    $zenyfm = "";
-    if ($zeny >= 1000000000)
-        $zenyfm = sprintf("%d,%d,%d,%d", $zeny/1000000000, $zeny/1000000, $zeny%1000000/1000, $zeny%1000);
-    else if ($zeny >= 1000000)
-        $zenyfm = sprintf("%d,%d,%d", $zeny/1000000, $zeny%1000000/1000, $zeny%1000);
-    else if ($zeny >= 1000)
-        $zenyfm = sprintf("%d,%d", $zeny/1000, $zeny%1000);
-    else
-        $zenyfm = $zeny;
-        
-    return $zenyfm;
-}*/
-
-function get_currency($zeny) {
-    $str = "";
-    
-    $s = strrev($zeny);    # . "";    # convert to string
-    
-    for ($i=0; $i<strlen($s); $i++) {
-        if ($i%3 == 0 && $i != 0)
-            $str = $str . ",";
-            
-        $str = $str . $s[$i];
-    }
-    
-    return strrev($str);
-}
 
 ?>
 
