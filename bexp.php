@@ -1,5 +1,7 @@
 <?php
 
+# TODO: Read Base exp from file instead of hard-coded
+
 // first job exp
 $exp = array(
 	"fjob" => array(
@@ -214,28 +216,18 @@ $x = 0;
 $gain = 0.0;
 $lvl1 = $_POST["lvl1"];
 $lvl2 = $_POST["lvl2"];
-$exp1 = $_POST["exp1"];
-$exp2 = $_POST["exp2"];
+$exp1 = $_POST["exp1"] * 1;  // convert to number
+$exp2 = $_POST["exp2"] * 1;
 $roclass = $_POST["roclass"];
 
-$expgain = $_POST["expgain"];
+$expgain = (int)($_POST["expgain"] * 1);  // to number and truncate
 $lvl3 = 0;
 $exp3 = 0.0;
 
 // 00-99 or 00.0-99.0 is permitted, but not 100 or 100.0
-$exp_format = "^[0-9][0-9]?|[0-9][0-9]?\.[0-9]$";
+$exp_format = "^([0-9][0-9]?|[0-9][0-9]?\.[0-9])$";
 
 $valid = 1;
-
-var_dump($lvl1, $lvl2);
-echo '$lvl1 == 0';
-var_dump($lvl1 == 0);
-echo '<br />$lvl1 == NULL';
-var_dump($lvl1 == NULL);
-echo '<br />$lvl1 == ""';
-var_dump($lvl1 == "");
-echo '<br />$lvl1 == "0"';
-var_dump($lvl1 == "0");
 
 // validate form fields
 if (!($lvl1 >= 1 && $lvl1 <= 99)) {
