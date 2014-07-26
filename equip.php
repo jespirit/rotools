@@ -103,10 +103,10 @@ $service_fees = array(2000, 50, 200, 5000, 20000);
 $names = array("Armor", "Weapons Lv 1", "Weapons Lv 2", "Weapons Lv 3", "Weapons Lv 4");
     
 
-$base = $_POST["base"];       // base price of equipment
-$wlvl = $_POST["wlvl"];       // weapon level 1-4, or armor
-$ori = $_POST["ori"];        // market price of oridecon
-$jlvl = $_POST["jlvl"];       // job level of whitesmith
+$base = $_POST["base"];  // Base price of equipment
+$wlvl = $_POST["wlvl"];  // Weapon level 1-4, or armor
+$ori = $_POST["ori"];  // Market price of oridecon
+$jlvl = $_POST["jlvl"];  // Job level of whitesmith
 $eqrefine = 0;
 $fee = 0;
 $itemcost = 0;
@@ -124,7 +124,9 @@ if (!preg_match("/$isnumeric/", $base)) {
 }
 
 $bonus = ($jlvl-50)/2;     // +% from job bonus
-//$bonus = sprintf("%d", $bonus); // just get as integer
+$bonus = sprintf("%d", $bonus); // just get as integer
+if ($jlvl <= 50)
+	$bonus = 0;
 
 if ($wlvl == 0)
     $bonus = 0;     // refining an armor
@@ -145,7 +147,7 @@ for ($i=5; $i<=10; $i++) {
 //print "Applying bonuses $bonus";
 print_table();
 
-// +5 and above chances
+// +5 and above chances, [60, 60*40, 60*40*40, 60*40*40*20, 60*40*40*20*20, 60*40*40*20*20*10]
 $chances = array(0, 100, 100, 100, 100, $percentrefinery[$wlvl][5], 1, 1, 1, 1, 1);
 $denoms =  array(0, 1, 1, 1, 1, 100, pow(100, 2), pow(100, 3), pow(100, 4), pow(100, 5), pow(100, 6));
 
@@ -167,23 +169,23 @@ print "<tr>".
 	  "</tr>";
 	  
 for ($i=5; $i<=10; $i++) {
-    $per = $chances[$i] * 100 / $denoms[$i];
-    $chanc = sprintf("%.2f",$denoms[$i] / $chances[$i]);
-	$dchanc = sprintf("%d", $chanc);	// integer form of $chanc, rounded down 
-    $selling =  $chanc * $base;	// selling price of equipment, also cost of buying x amount of equips
+    $per = $chances[$i] / $denoms[$i];
+    $chance = sprintf("%.2f",$denoms[$i] / $chances[$i]);
+	$dchance = sprintf("%d", $chance);	// integer form of $chance, rounded down
+    $selling =  $base / $per;	// selling price of equipment, also cost of buying x amount of equips
     
-    $selling = sprintf("%d", $selling);
+    //$selling = sprintf("%f", $selling);
 	
-	$ori_num = $i * $dchanc;	// just use the maximum amount of oris expected to be used
-	$itemcost = $i * $ori * $dchanc;	// estimated total cost of items used to refine
-	$fee = $i * (($wlvl == 0) ? $service_fees[$wlvl] : 0) * $dchanc;	// total service fee
+	$ori_num = $i * $dchance;	// just use the maximum amount of oris expected to be used
+	$itemcost = $i * $ori * $dchance;	// estimated total cost of items used to refine
+	$fee = $i * (($wlvl == 0) ? $service_fees[$wlvl] : 0) * $dchance;	// total service fee
 	$total = $selling + $itemcost + $fee;
     
     print "<tr>".
           "<td>+$i</td>".
           "<td>$chances[$i] / $denoms[$i]</td>".    // x / y
-          "<td>$per%</td>".    //  ratio as a percentage
-          "<td>1 in $chanc</td>".     // 1 out of x chances
+          "<td>". $per*100 ."%</td>".    //  ratio as a percentage
+          "<td>1 in $chance</td>".     // 1 out of x chances
           "<td>". number_format($selling) ."</td>".
 		  "<td>". $ori_num ."</td>".
 		  "<td>". number_format($total)
