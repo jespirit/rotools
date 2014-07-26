@@ -9,7 +9,7 @@
 	<style type="text/css">
 		table.txtr td { text-align: right; }
 		.mH { color:#60c; cursor:pointer;  font-weight:bold; border-top:1px solid #300; }
-		#stuff { display: none;
+		#stuff { display: none; }
 	</style>
 	<script language="javascript" type="text/javascript">
 	function toggleMenu(objID) {
@@ -53,6 +53,10 @@
 				<tr>
 					<td>Success Chance (%):</td>
 					<td><input type='text' name='per' /></td>
+				</tr>
+                <tr>
+					<td>AD Set:</td>
+					<td><input type='text' name='ad_set' /></td>
 				</tr>
 				<tr>
 					<td>Merchant Discount Level:</td>
@@ -154,25 +158,26 @@ Poison Spore x 5
 if (!isset($_POST["submit"]))
 	exit();
 		  
-$info = array(
+$data = array(
 		  // total # ingredients to purchase, # of ingredients per TA3, name of ingredient, cost of ingredient
           array(1, 200, "Empty Bottle",     6,   $_POST["n1"]),
-		  array(1, 50,  "Alcohol",          0,   $_POST["n2"]),
+		  array(0, 0,   "Alcohol",          0,   $_POST["n2"]),
 		  array(1, 50,  "Fabric",           306, $_POST["n3"]),
 		  array(1, 200, "Medicine Bowl",    8,   $_POST["n4"]),
 		  
 		  array(1, 50,  "Immortal Heart",   374, $_POST["n5"]),	// 4
 		  
-		  array(1, 500, "Stem",             46,  $_POST["n6"]),			// 5
+		  array(1, 500, "Stem",             46,  $_POST["n6"]),	// 5
 		  array(1, 100, "Empty Test Tube",  3,   $_POST["n7"]),	// 6
 		  array(1, 500, "Poison Spore",     114, $_POST["n8"]),	// 7
 		);
 		
 $adnum = $_POST["adnum"];
 $per = $_POST["per"];
+$ad_set = $_POST["ad_set"] ? $_POST["ad_set"] : 0;  // default to zero
 			  
 $isnumeric = "^[0-9]+$";
-$isdecimal = "^[0-9]{1,3}$|^[0-9]{1,3}.[0-9]{1,2}$";
+$isdecimal = "^([0-9]{1,3}|[0-9]{1,3}.[0-9]{1,2})$";  // 0-100, 000.00-100.00
 
 $skilllvl = $_POST["discountlvl"];
 $discount = array(0, 7, 9, 11, 13, 15, 17, 19, 21, 23, 24);
@@ -188,8 +193,14 @@ $totals = array(
 	"fb" => array(1, 1),
 	"ab" => array(1, 1),
 	);
+    
+// empty= "", 0, 0.0, "0", NULL, FALSE, array(), $var
+// numeric= 0, 0.0, "0"
+function nothing($x) {  // returns true if $x= "", NULL, FALSE, array(), $var
+    return empty($x) && !is_numeric($x);
+}
 
-// fields must be positive integers only
+// validate the input fields
 
 if (!preg_match("/$isnumeric/", $adnum)) {
 	print "Number of AD Bottles must be a positive integer.<br />";
@@ -199,13 +210,16 @@ else if ($adnum <= 0) {
 	print "Please enter an amount greater than 0.<br />";
 	exit();
 }
-
-if (!(empty($per) && !is_numeric($per)) && (!preg_match("/$isdecimal/", $per) || $per > 100)) {
+else if (nothing($per) || !preg_match("/$isdecimal/", $per) || $per > 100) {
 	print "Please enter a valid percentage for success chance ##.## in range 0.00-100.00<br />";
 	exit();
 }
+else if (!preg_match("/$isnumeric/", $ad_set)) {
+    print "Please enter a correct value for AD set.<br />";
+    exit();
+}
 
-foreach ($info as &$val) {
+foreach ($data as &$val) {
 	$val[4] *= 1;	// treat as integer
 	if (!preg_match("/$isnumeric/", $val[4])) {
 		print "Number of {$val[2]} must be a positive integer.<br />";
@@ -216,58 +230,62 @@ foreach ($info as &$val) {
 		exit();
 	}
 }
+unset($val);
 
 // number of times to cast Twilight Alchemy III to reach the supposed AD #
 $count = (int)($adnum / 50);
 $rem = $adnum % 50;
 
 // now calculate how many to buy for each ingredient
-for ($i=0; $i<count($info); $i++) {
-	$info[$i][0] = $count * $info[$i][1];
+for ($i=0; $i<count($data); $i++) {
+	$data[$i][0] = $count * $data[$i][1];  // twilight count * # of ingredients per twilight
 	// apply discount
-	$info[$i][3] = sprintf("%d", $info[$i][3] * (100 - $discount[$skilllvl]) / 100);
-	$cost = $info[$i][0] * $info[$i][3];
+	$data[$i][3] = sprintf("%d", $data[$i][3] * (100 - $discount[$skilllvl]) / 100);
+	$cost = $data[$i][0] * $data[$i][3];  // cost = final total * price
 	$total_cost += $cost;
 }
 
 // calculate the total cost to make alcohol 
 for ($i=0; $i<count($alcohol_ing); $i++) {
 	$price = (int)($alcohol_ing[$i] * (100 - $discount[$skilllvl]) / 100) * $alcohol_amt[$i];
-	$info[1][3] += $price;
+	$data[1][3] += $price;
 }
 
-$total_cost += $info[1][0] * $info[1][3];
+//$total_cost += $data[1][0] * $data[1][3];  // += total amount of alcohol * cost per alcohol
 
 /* can't permanently assign values to the array */
 /*
-foreach ($info as $v) {
+foreach ($data as $v) {
 	print "before: $v[0] ";
 	$v[0] = $count * $v[1];
 	print "after: $v[0] <br />";
 }*/
 
-//$info[0][0] = 999;
+//$data[0][0] = 999;
 
 /*
 print "Results: ";
-foreach ($info as $v) {
+foreach ($data as $v) {
 	print $v[0] ." ";
 }*/
 
-format2table($info, $count, $discount, $skilllvl, $total_cost);
+format2table($data, $count, $discount, $skilllvl, $ad_set, $total_cost);
 
 $total_cost = 0;
 
+/// Calculate how many ingredients you need to buy to make any remaining
+/// AD bottles ie. 1020 % 50 = 20
+
 for ($i=0; $i<5; $i++) {
-	$info[$i][0] = $rem;
+	$data[$i][0] = $rem;
 }
 
 // empty bottle + medicine bowl is doubled in amount
-$info[0][0] = $info[3][0] = $rem * 2;
+$data[0][0] = $data[3][0] = $rem * 2;
 
 // calculate the cost of any remaining AD
 for ($i=0; $i<5; $i++) {
-	$cost = $info[$i][0] * $info[$i][3];
+	$cost = $data[$i][0] * $data[$i][3];
 	$total_cost += $cost;
 }
 
@@ -286,16 +304,18 @@ print "<table class='txtr' border='1' style='float:left; margin-left: 50px;'>".
 	  
 	  
 for ($i=0; $i<5; $i++) {
-	$tobuy = $info[$i][0] - $info[$i][4];
+	$tobuy = $data[$i][0] - $data[$i][4];  // = how many to buy in total - how many you already have
+    // $tobuy can be a negative number which means you have excess in ingredients
+    // from twilight that can be used to create any remaining AD
 	if ($tobuy < 0)
 		$tobuy = 0;
 		
 	print "<tr>".
-	      "<td>{$info[$i][2]}</td>".
-		  "<td>". number_format($info[$i][3]) ."</td>".
-		  "<td>". number_format($info[$i][0]) ."</td>".
-		  "<td> (". number_format($info[$i][4]) .") ". number_format($tobuy) ."</td>".
-		  "<td>". number_format($info[$i][0]*$info[$i][3]) ."</td>".
+	      "<td>{$data[$i][2]}</td>".
+		  "<td>". number_format($data[$i][3]) ."</td>".  // cost per ingredient
+		  "<td>". number_format($data[$i][0]) ."</td>".
+		  "<td> (". number_format($data[$i][4]) .") ". number_format($tobuy) ."</td>".
+		  "<td>". number_format($data[$i][0]*$data[$i][3]) ."</td>".
 		  "</tr>";
 }
 
@@ -311,7 +331,7 @@ print "<tr>".
 	  "<td>&nbsp</td>".
 	  "<td>&nbsp</td>".
 	  "<td>&nbsp</td>".
-	  "<td>". number_format($total_cost - $info[1][0] * $info[1][3]) ."</td>".
+	  "<td>". number_format($total_cost - $data[1][0] * $data[1][3]) ."</td>".
 	  "</tr>".
       "</table>";
       "</table>";
@@ -319,8 +339,10 @@ print "<tr>".
 if ($per == 0)
 	$per = 100;
 $per *= 100;
-$totals["fb"][0] = $info[0][3] + $info[1][3] + $info[2][3] + $info[3][3];
-$totals["fb"][1] = (int)($totals["fb"][0] * 10000 / $per);
+
+// get total cost for 1 fire bottle (empty bottle + alcohol + fabric + medicine bowl)
+$totals["fb"][0] = $data[0][3] + $data[1][3] + $data[2][3] + $data[3][3];
+$totals["fb"][1] = (int)($totals["fb"][0] * 10000 / $per);  // calculate adjusted selling price
 	  
 print "<table class='txtr' border='1' style='float:left; margin-left: 100px;'>".
 	  "<tr>".
@@ -328,20 +350,20 @@ print "<table class='txtr' border='1' style='float:left; margin-left: 100px;'>".
 		  "<td>Cost</td>".
 	  "</tr>".
 	  "<tr>".
-	      "<td>{$info[0][2]}</td>".
-		  "<td>{$info[0][3]}</td>".
+	      "<td>{$data[0][2]}</td>".  // empty bottle
+		  "<td>{$data[0][3]}</td>".
 	  "</tr>".
 	  "<tr>".
-	      "<td>{$info[1][2]}</td>".
-		  "<td>{$info[1][3]}</td>".
+	      "<td>{$data[1][2]}</td>".  // alcohol
+		  "<td>{$data[1][3]}</td>".
 	  "</tr>".
 	  "<tr>".
-	      "<td>{$info[2][2]}</td>".
-		  "<td>{$info[2][3]}</td>".
+	      "<td>{$data[2][2]}</td>".  // fabric
+		  "<td>{$data[2][3]}</td>".
 	  "</tr>".
 	  "<tr>".
-	      "<td>{$info[3][2]}</td>".
-		  "<td>{$info[3][3]}</td>".
+	      "<td>{$data[3][2]}</td>".  // medicine bowl
+		  "<td>{$data[3][3]}</td>".
 	  "</tr>".
 	  "<tr>".
 		  "<td>Total Price</td>".
@@ -357,7 +379,7 @@ print "<table class='txtr' border='1' style='float:left; margin-left: 100px;'>".
 	  "</tr>".
 	  "</table>";
 	  
-$totals["ab"][0] = $info[0][3] + $info[4][3] + $info[3][3];
+$totals["ab"][0] = $data[0][3] + $data[4][3] + $data[3][3];
 $totals["ab"][1] = (int)($totals["ab"][0] * 10000 / $per);
 	  
 print "<table class='txtr' border='1' style='float:left; margin-left: 10px;'>".
@@ -366,16 +388,16 @@ print "<table class='txtr' border='1' style='float:left; margin-left: 10px;'>".
 		  "<td>Cost</td>".
 	  "</tr>".
 	  "<tr>".
-	      "<td>{$info[0][2]}</td>".
-		  "<td>{$info[0][3]}</td>".
+	      "<td>{$data[0][2]}</td>".  // amount of ingredients for 1 acid bottle
+		  "<td>{$data[0][3]}</td>".  // cost per ingredient
 	  "</tr>".
 	  "<tr>".
-	      "<td>{$info[4][2]}</td>".
-		  "<td>{$info[4][3]}</td>".
+	      "<td>{$data[4][2]}</td>".
+		  "<td>{$data[4][3]}</td>".
 	  "</tr>".
 	  "<tr>".
-	      "<td>{$info[3][2]}</td>".
-		  "<td>{$info[3][3]}</td>".
+	      "<td>{$data[3][2]}</td>".
+		  "<td>{$data[3][3]}</td>".
 	  "</tr>".
 	  "<tr>".
 		  "<td>Total Price</td>".
@@ -391,57 +413,72 @@ print "<table class='txtr' border='1' style='float:left; margin-left: 10px;'>".
 	  "</tr>".
 	  "</table>";
 
-function format2table(&$info, $count, $discount, $skilllvl, $total_cost) {
-print "<table class='txtr' border='1' style='float:left; margin-left: 200px;'>".
-      "<tr>".
-		  "<td>Attempts/AD:</td>".
-		  "<td>$count</td>".
-		  "<td>". number_format($count*50) ."</td>".
-	  "</tr>".
-	  "<tr>".
-		  "<td>&nbsp</td>".
-		  "<td>Cost</td>".
-		  "<td>Total Amount</td>".
-		  "<td>Amount To Buy</td>".
-		  "<td>Total Cost</td>".
-	  "</tr>";
-	  
-	  
-foreach ($info as &$v) {
-	$bought = $v[4];
-	$tobuy = $v[0] - $v[4];
-	if ($tobuy < 0) {
-		$v[4] = $tobuy * -1;
-		$tobuy = 0;
-	}
-	else {
-		$v[4] = 0;
-	}
-		
-	print "<tr>".
-	      "<td>$v[2]</td>".
-		  "<td>". number_format($v[3]) ."</td>".
-		  "<td>". number_format($v[0]) ."</td>".
-		  "<td> (". number_format($bought) .") ". number_format($tobuy) ."</td>".
-		  "<td>". number_format($v[0]*$v[3]) ."</td>".
+function format2table(&$data, $count, $discount, $skilllvl, $ad_set, $total_cost) {
+	print "<table class='txtr' border='1' style='float:left; margin-left: 200px;'>".
+		  "<tr>".
+			  "<td>Attempts/AD:</td>".
+			  "<td>$count</td>".
+			  "<td>". number_format($count*50) ."</td>".
+		  "</tr>".
+		  "<tr>".
+			  "<td>&nbsp</td>".
+			  "<td>Cost</td>".
+			  "<td>Total Amount</td>".
+			  "<td>Amount To Buy</td>".
+			  "<td>Total Cost</td>".
 		  "</tr>";
+		  
+		  
+	foreach ($data as &$v) {
+		$bought = $v[4];  // how many of the ingredient you have
+		$tobuy = $v[0] - $v[4];  // how many more of it you need
+		if ($tobuy < 0) {
+			$v[4] = $tobuy * -1;
+			$tobuy = 0;
+		}
+		else {
+			$v[4] = 0;
+		}
+			
+		print "<tr>".
+			  "<td>$v[2]</td>".
+			  "<td>". number_format($v[3]) ."</td>".
+			  "<td>". number_format($v[0]) ."</td>".
+			  "<td> (". number_format($bought) .") ". number_format($tobuy) ."</td>".
+			  "<td>". number_format($v[0]*$v[3]) ."</td>".
+			  "</tr>";
+	}
+
+	/* The actual costs of making the AD is total_cost + alcohol_50 - alcohol_sold
+	   where alcohol_50 accounts for the 50 alcohol you need to make to begin alchemy
+	   and alcohol_sold is the zeny gained by selling the total remaining alcohol
+	   which effectively reduces the actual cost of the AD.
+	   
+	   From there you subtract the result from total_sales to get profit.
+	   
+	   alcohol_sold = (50 + 50x) * 248, where x is the number of alchemy attempts
+	   
+	   profit = total_sales - (total_cost + alcohol_50 - alcohol_sold)
+	   
+	 */
+
+	$total_sales = $count * 50 * $ad_set;
+	$alcohol_50 = 50 * 612;
+	$alcohol_sold = (50 + 50 * $count) * 248;
+	$operating_cost = $total_cost + $alcohol_50 - $alcohol_sold;
+	$profit = $total_sales - $operating_cost;
+
+	format2row("Cost to make:", $operating_cost);
+	format2row("Total Sales:", $total_sales);
+	format2row("Profit:", $profit);
+	print "</table>";
 }
 
+function format2row($caption, $amount) {
 print "<tr>".
-      "<td>Total (-$discount[$skilllvl]%):</td>".
-	  "<td>&nbsp</td>".
-	  "<td>&nbsp</td>".
-	  "<td>&nbsp</td>".
-	  "<td>". number_format($total_cost) ."</td>".
-	  "</tr>".
-	  "<tr>".
-      "<td>Total (- Alcohol):</td>".
-	  "<td>&nbsp</td>".
-	  "<td>&nbsp</td>".
-	  "<td>&nbsp</td>".
-	  "<td>". number_format($total_cost - $info[1][0] * $info[1][3]) ."</td>".
-	  "</tr>".
-      "</table>";
+      "<td>$caption</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>".
+	  "<td>". number_format($amount) ."</td>".
+	  "</tr>";
 }
 
 ?>
