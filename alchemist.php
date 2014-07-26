@@ -7,8 +7,30 @@
 	<title>Alchemist Ranking</title>
 	<link rel="stylesheet" type="text/css" href="/css/style.css" />
 	<style type="text/css">
-		
+		//#twilight-chk { display: none }
 	</style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script>
+	function toggleMenu(objID) {
+		if (!document.getElementById) return;
+		var ob = document.getElementById(objID).style;
+		ob.display = (ob.display == 'block')?'none':'block';
+	}
+	
+	$(document).ready(function() {
+		$("[name='potion']").change(function() {
+			var x = $(this).val();
+			if (x == 4) {  // white potion
+				$("#twilight-chk").css("display", "block");
+				$("#twilight").removeAttr("disabled");  // enable checkbox
+			}
+			else {
+				$("#twilight-chk").css("display", "none");
+				$("#twilight").attr("disabled", true);  // disable checkbox
+			}
+		});
+	});
+	</script>
 </head>
 
 <body>
@@ -39,12 +61,13 @@
 				<tr>
 					<td>Success Chance (%):</td>
 					<td><input type='text' name='per' /></td>
+					<td>Enter a percentage (0-100%)</td>
 				</tr>
                 <?php 
                     $types = array('Red, Yellow, White Potion', 'Blue Potion', 
                                    'Condensed Red Potion', 'Condensed Yellow Potion', 'Condensed White Potion');
                                    
-					for ($i=0; $i<5; $i++) {
+					for ($i=0; $i<count($types); $i++) {
 						if ($i == 0)	// default selected value
 							print "<tr><td><input type='radio' name='potion' checked='checked' value='$i' />" . $types[$i] . "</td></tr>";
 						else
@@ -54,10 +77,11 @@
 				<tr>
 					<td>Amount:</td>
 					<td><input type='text' name='qty' /></td>
-				</tr>
-                <tr>
-					<td>Twilight:</td>
-					<td><input type='text' name='twilight' /></td>
+					<td>
+						<div id='twilight-chk'>
+							<input type='checkbox' name='twilight' id='twilight' value='1' disabled='disabled' />Twilight?
+						</div>
+					</td>
 				</tr>
 			</table>
 
@@ -78,13 +102,13 @@
 if (!isset($_POST["submit"]))
 	exit();
 
-$qty = $_POST["qty"];
 $per = $_POST["per"];
-$twilight = $_POST["twilight"];
-$nherbs = 0;    // # of herbs
+$qty = $_POST["qty"];
 $potion = $_POST["potion"];
+$nherbs = 0;    // # of herbs
 $base_per = 0;
 
+$twilight = 0;
 $fame = 0;
 $pots = 0;
 $counter = 0;
@@ -97,8 +121,8 @@ $types = array('Red, Yellow, White Potion', 'Blue Potion',
 $MAX_VALUE = 1000000;	// 1mil max
 
 // 0-100 | 000.00-100.00
-$isdecimal = "^[0-9]{1,3}$|^[0-9]{1,3}.[0-9]{1,2}$";
-$is_numeric = "[0-9]+";
+$isdecimal = "^([0-9]{1,3}|[0-9]{1,3}\\.[0-9]{1,2})$";
+$is_numeric = "^[0-9]+$";
 
 // validate fields
 
@@ -115,11 +139,6 @@ else if ($qty == 0 || $qty < 0) {
 else if (!($qty <= $MAX_VALUE)) {
 	print "Error. ";
 	print "Integer overflow. Amount must be less than/equal to ". number_format($MAX_VALUE) ."<br />";
-	exit();
-}
-else if (!preg_match("/$is_numeric/", $twilight)) {
-	print "Error. ";
-	print "Twilight alchemy value must be a positive integer, > 0";
 	exit();
 }
 
@@ -146,14 +165,14 @@ for ($i=0; $i<5; $i++) {
     }
 }
 
-// For Twilight Alchemy, the chance is calculated once per use.
-
-if ($potion == 4)
-    $qty = 200;
+if (isset($_POST["twilight"])) {
+	// quantity now represents how many Twilight Alchemys to perform
+	$twilight = 200;
+}
 else
-    $twilight = 1;
+	$twilight = 1;
 
-for ($x=0; $x<$twilight; $x++) {
+for ($x=0; $x<$qty; $x++) {
     $per = $base_per;  // Restore the base percent.
     
     // Apply bonuses or penalties.
@@ -174,7 +193,8 @@ for ($x=0; $x<$twilight; $x++) {
             break;
     }
 
-    for ($i=0; $i<$qty; $i++)
+	// the percent chance for twilight alchemy is calculated once for each activation
+    for ($i=0; $i<$twilight; $i++)
     {
         if (rand(1, 10000) <= $per)
         { // Success
