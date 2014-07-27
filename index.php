@@ -31,9 +31,6 @@ include_once 'config.php'; // loads config variables
 include_once 'query.php'; // imports queries
 include_once 'functions.php';
 
-$_SESSION[$CONFIG_name.'castles'] = readcastles();
-$_SESSION[$CONFIG_name.'jobs'] = readjobs();
-
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -50,53 +47,33 @@ $_SESSION[$CONFIG_name.'jobs'] = readjobs();
 	<body>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	
-	<!-- CeresCP Header -->
+	<!--  Header -->
 	<div id="header"></div>
 	
-	<!-- CeresCP Menu -->
+	<!--  Menu -->
 	<div id="main_menu"></div>
 	<div id="menu_load" style="position:absolute; top:0px; left:0px; visibility:hidden;"></div>
 	
-	<!-- CeresCP Loading Image -->
+	<!--  Loading Image -->
 	<div id="load_div" style="position:absolute; top:161px; left:790px; height:30px width:25px; visibility:hidden; background-color:#000000; color:#FFFFFF"><img src="images/loading.gif" alt="Loading..."></div>
 	
-	<!-- CeresCP Sub Menu -->
+	<!--  Sub Menu -->
 	<div id="sub_menu"></div>
 
-	<!-- CeresCP Content -->
+	<!--  Content -->
 	<div id="main_content">
 		<div id="main_div"></div>
-		<!-- CeresCP Sidebar -->
-		<div id="sidebar">
-			<div id="login_div"></div>
-			<div id="new_div"></div>
-			<div id="status_div"></div>
-			<div id="selectlang_div"></div>
-		</div>
 	</div>
 	
-	<!-- CeresCP Footer -->
+	<!--  Footer -->
 	<div id="footer">
-			<font color="#FFFFFF">
-				Copyright © 2005-2012
-				<span style="cursor:pointer" class="copyright_link" onClick="window.open('http://cerescp.sourceforge.net/');">
-					Ceres Control Panel</span> by Beowulf and Dekamaster
-					<BR>
-					Powered by <span style="cursor:pointer" onClick="window.open('http://en.wikipedia.org/wiki/KISS_principle');">
-					<img src="images/kiss.png" alt="Keep It Simple Stupid! Technology" border="0" align=bottom>
-				</span> <span style="cursor:pointer" onClick="window.open('http://validator.w3.org/check?uri='+document.URL);">
-					<img src="http://cerescp.sourceforge.net/ceres/img.php?<?echo $qwty?>" alt="w3c" style="visibility:hidden">
-					<img src="http://www.w3.org/Icons/valid-html401" alt="Valid HTML 4.01 Transitional" height="15" width="43">
-				</span>
-			</font>
+		<font color="#FFFFFF">
+			Copyright © 2014
+		</font>
 	</div>
 	<script type="text/javascript">
-			load_menu();
-			LINK_ajax('motd.php', 'main_div');
-			LINK_ajax('login.php', 'login_div');
-			login_hide(2);
-			server_status()
-			LINK_ajax('selectlang.php', 'selectlang_div');
+		load_menu();
+		LINK_ajax('motd.php', 'main_div');
 	</script>
 	</body>
 </html>
