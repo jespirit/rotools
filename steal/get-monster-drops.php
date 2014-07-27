@@ -1,6 +1,6 @@
 <?php
-	$id = "ragnarok_user";
-	$pass = "L0rdZ3rius";
+	$id = "ragnarok";
+	$pass = "Fish";
 	$dbase = "ragnarok"; // name of "schema" in MySQL not database instance
 
 	//                    host:       user:    	passwd:

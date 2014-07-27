@@ -18,8 +18,8 @@
 			<select name='monsterid' onchange='displayInfo(this.value)'>
 			<?php
 			
-				$id = "ragnarok_user";
-				$pass = "L0rdZ3rius";
+				$id = "ragnarok";
+				$pass = "Fish";
 				$dbase = "ragnarok"; // name of "schema" in MySQL not database instance
 
 				//                    host:       user:    	passwd:
@@ -129,8 +129,8 @@ foreach ($drops as $drop) {
 $i = 0;
 $table1 = "mob_db";
 	
-$id = "ragnarok_user";
-$pass = "L0rdZ3rius";
+$id = "ragnarok";
+$pass = "Fish";
 $dbase = "ragnarok"; // name of "schema" in MySQL not database instance
 
 //                    host:       user:    	passwd:
@@ -183,7 +183,7 @@ else {
 		$output = substr($output, 0, $pos);
 	
 	// Save the record as a REPLACE statement
-	$sql_replace = sprintf("REPLACE INTO mob_db VALUES(%s)\n", $output);
+	$sql_replace = sprintf("REPLACE INTO mob_db VALUES(%s);\n", $output);
 	
     // The REPLACE statement can be used to restore the record to a previous state.
 	fputs($fp, $sql_replace);

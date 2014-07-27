@@ -39,8 +39,8 @@
 			<select name='monsterid'>
 			<?php
 			
-				$id = "ragnarok_user";
-				$pass = "L0rdZ3rius";
+				$id = "ragnarok";
+				$pass = "Fish";
 				$dbase = "ragnarok"; // name of "schema" in MySQL not database instance
 
 				//                    host:       user:    	passwd:
@@ -133,8 +133,8 @@ else if (!preg_match("/$isnumeric/", $dex) || $dex < 0) {
 $i = 0;
 $table1 = "mob_db";
 	
-$id = "ragnarok_user";
-$pass = "L0rdZ3rius";
+$id = "ragnarok";
+$pass = "Fish";
 $dbase = "ragnarok"; // name of "schema" in MySQL not database instance
 
 //                    host:       user:    	passwd:
@@ -163,8 +163,10 @@ else {
 	$rate = ($dex - $monster_dex)/2 + $steallvl*6 + 4;
 
     // There is no cap on steal rate, can be +100%.
-	if ($rate < 1)
-		$rate = 0;
+	if ($rate < 1) {
+		print "Warning: Steal Rate = 0%";
+		exit();
+	}
 	
 	$drops = array(
 			//    0                       1                         2          3           4         5           6
@@ -199,6 +201,9 @@ else {
 				
             // The drop rate is reduced by the player's steal rate.
 			$drop['adj'] = floor($drop['per'] * $rate/100);
+			if ($drop['adj'] < 1) {
+				$drop['adj'] = NULL;
+			}
 			
 			/* To calculate the percentage to steal a drop, for instance, to steal
 			   a Crystal Mirror in the 6th slot from a Mavka would require unsuccessful
@@ -226,7 +231,7 @@ else {
 			$i++;
 		}
 	}
-	// Note: When referenced, the $value still refers to the last element in the array.
+	// Note: When referenced, $drop still refers to the last element in the array.
 	// You have to destroy the reference with unset().
 	unset($drop);
 		
@@ -252,12 +257,12 @@ else {
 		for ($count = 0; $count < $num_monsters; ) {
 			// Try dropping an item in order from first to last possible slot.
 			for ($i = 0; $i < $MAX_STEAL_DROP; $i++) {
-				if ($drops[$i]['id'] > 0 && rand(0,10000-1) < $drops[$i]['adj'])
+				if ($drops[$i]['id'] > 0 && (!$drops[$i]['adj']) && rand(0,10000-1) < $drops[$i]['adj'])
 					break;
 			}
 			
 			$steal_attempts++;	// Count the number of attempts.
-			if ($i == $MAX_STEAL_DROP)
+			if ($i == $MAX_STEAL_DROP)  // Nothing stolen, try again.
 				continue;
 				
 			$count++;
