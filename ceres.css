@@ -1,0 +1,307 @@
+/*
+Ceres Control Panel
+
+This is a control pannel program for Athena and Freya
+Copyright (C) 2005 by Beowulf and Nightroad
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+To contact any of the authors about special permissions send
+a mail to cerescp@gmail.com
+*/
+/** CORPO */
+body {
+	font-size: 62.5%;
+	font-family: verdana,arial;
+	margin-top:0px;
+	margin-bottom:0px;
+	background: url(images/background.jpg);
+}
+/** HEADER */
+#header {
+	width: 900px;
+	height: 180px;
+	background-image: url(images/testro.jpg);
+	background-repeat: none;
+	margin: 0 auto;
+}
+
+/** MENU */
+#main_menu {
+	width: 900px;
+	height: 25px;
+	line-height: 24px;
+	background: #000;
+	font-family: verdana,arial;
+	font-size: 1em;
+	font-weight: bold;
+	color: #fff;
+	margin: 0 auto;
+}
+
+#sub_menu {
+	width: 900px;
+	height: 25px;
+	line-height: 24px;
+	background: #2C3D50;
+	font-family: verdana,arial;
+	font-size: 1em;
+	font-weight: bold;
+	color: #fff;
+	margin: 0 auto;
+}
+#main_menu span.link, #sub_menu span.link {
+	color: #ffffff;
+}
+#main_menu span.link:hover, #sub_menu span.link:hover {
+	color: #FF3300;
+}
+
+/** CONTENT */
+#main_content {
+	width: 900px;
+	background-color: #fff;
+	overflow: hidden;
+	margin: 0 auto;
+}
+
+#main_div {
+	width: 700px;
+	padding: 10px;
+	float: left;
+}
+
+.maintable {
+	width: 100%;
+	border: none;
+	margin: 5px auto;
+}
+
+/** RIGHT SIDEBAR */
+#sidebar {
+	width: 180px;
+	height: 470px;
+	background-color: #D0D9E0;
+	float: right;
+}
+
+#login_div, #status_div, #selectlang_div, #new_div {
+	padding-left: 6px;
+	padding-right: 5px;
+	padding-top: 5px;
+}
+
+/** FOOTER */
+#footer {
+	width: 900px;
+	height: 35px;
+	padding-top: 5px;
+	background-color: #2C3D50;
+	text-align: center;
+	margin: 0 auto;
+	color: #fff;
+}
+
+/** FORMS INPUT */
+input, select, option, textarea { 
+	font-family: verdana,arial;
+	font-size: 1em;
+	background-color: #D6D3D6;
+	color: #000000;
+	border: solid;
+}
+
+/** TABLE TR, TD */
+tr, td {
+	font-size: 1em;
+	font-family: verdana,arial;
+	color: #000000;
+}
+
+th {
+	font-size: 1em;
+	font-family: verdana,arial;
+	color: #000000;
+	font-weight: bold;
+}
+
+table#application td {
+	text-align: center;
+}
+
+.highlight {
+	font-weight: bold;
+}
+.disabled {
+	color: #AAAAAA;
+}
+
+/** GENERAL */
+.head {
+	font-weight: bold;
+}
+
+.title { 
+	font-family: verdana,arial;
+	font-size: 1.2em;
+	font-weight: bold;
+	color: #000000;
+	text-align: center;
+}
+
+a:visited, a:link {
+	font-size: 0.8em;
+	color:#000000;
+	line-height: 8pt;
+	font-family: arial;
+	font-weight: bold;
+	border-bottom: 0;
+	text-decoration: underline;
+}
+a:hover, a:active {
+	color: #FF3300;
+}
+
+a#download {
+	font-size: 1.1em;
+}
+
+.copyright_link {
+	font-size: 0.8em;
+	color:#FFFFFF; 
+	line-height: 8pt;
+	font-family: arial;
+	font-weight: bold;
+	border-bottom: 0;
+	text-decoration: none;
+}
+
+span.link {
+	cursor: pointer;
+	color: #000000;
+}
+
+span.link.active {
+	text-decoration: underline;
+}
+
+span.link:hover {
+	color: #FF3300;
+}
+
+span.warning {
+	color: #FF0000;
+	font-size: 1.6em;
+}
+
+span#warning-chk {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+input#register {
+	font-size: 1.2em;
+}
+
+p {
+	font-size: 1.2em;
+}
+
+p.warning {
+	color: #FF0000;
+}
+
+span.file-underline {
+	color: #000000;
+	text-decoration: underline;
+}
+
+div#update {
+	height: 470px;
+	width: 700px;
+	max-width: 700px;
+	overflow: auto;
+}
+
+div.entry {
+	font-size: 1.1em;
+	border-bottom-style: dashed;
+	border-bottom-width: 1px;
+}
+
+div.entry h1 {
+	color: #ff9c54;
+	border-bottom-style: dotted;
+	border-bottom-width: 1px;
+}
+
+div#update span.date {
+	font-size: 0.6em;
+	color: #00f;
+}
+
+li {
+	font-size: 1.2em;
+}
+
+span.code {
+	font-family: Courier New;
+	font-size: 1.1em;
+	background-color: #d1e1ef;
+	/* #bcccff; */
+}
+
+span.newitem {
+	color: #ff0000;
+}
+
+span.hide {
+	visibility: hidden;
+}
+
+div.item {
+	margin-top: 10px;
+}
+
+table.item {
+	font-family: Tahoma, Arial, Sans-serif;
+	font-size: 1em;
+	border-style: dotted;
+	border-width: 1px;
+	width: 100%;
+}
+
+table.item td.top {
+	background-color: #cccccc;
+	color: #ffffff;
+	font-size: 14px;  /* nested in a <li> causes undesired scaling */
+	font-weight: bold;
+	text-shadow: 1px 1px 0px #999;
+	padding: 5px 10px; /* [top, bottom], [left,right] */
+}
+
+table.item td {
+	font-family: Tahoma, Arial, Sans-serif;
+	border-style: dotted;
+	border-width: 1px;
+	min-width: 40px;
+	padding: 5px;
+}
+
+table.item td.attribute {
+	color: #000;
+	font-weight; bold;
+	background-color: #f7f7f7;
+}
