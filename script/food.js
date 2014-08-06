@@ -10,6 +10,42 @@ foodopt.appendChild(opt);
 }
 */
 
+function getRandomInt(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/* 	Format a number using the thousands separator.
+ */
+function format_num(num){
+	if (isNaN(num)) return;
+	
+	var str = "";
+	var x = new Array();
+	if(num < 0){
+		num = num * -1;
+		str += "-";
+	}
+	for(var i=0;Math.floor(num / 1000) != 0;i++){
+		var w = (num % 1000);
+		if(w == 0){
+			x[i] = ",000";
+		}else if(w < 10){
+			x[i] = ",00" + w;
+		}else if(w < 100){
+			x[i] = ",0" + w;
+		}else{
+			x[i] = "," + w;
+		}
+		num = Math.floor(num / 1000);
+	}
+	x[i] = num;
+	while(i>=0){
+		str += x[i];
+		i--;
+	}
+	return str;
+}
+
 with (document.food) {
 	var i;
 	var types = ["str", "agi", "vit", "int", "dex", "luk"];
@@ -25,6 +61,48 @@ with (document.food) {
 	}
 }
 
+function update_amounts() {
+with(document.food) {
+	var qty = parseInt(Qty.value);
+	var food_type = FoodType.value;
+	var food_level = parseInt(FoodLv.value);
+	var num_ing = food[food_type][food_level-1]["ing"].length;
+	
+	var i, amount;
+	for (i=0; i<num_ing; i++) {
+		amount = food[food_type][food_level-1]["ing"][i]["amount"];
+		$("#ingredients #ing"+i + " td span").text("= " + (amount*qty));
+	}
+}}
+
+function update_list() {
+	var form = document.getElementById("food");
+	var food_type = form.FoodType.value;
+	var food_level = parseInt(form.FoodLv.value);
+	
+	var i, ing;
+	var ing_field;
+	var str = "<table id='ingredients'>";
+	
+	str += "<tr><td colspan='2'>" + food[food_type][food_level-1]["food"][1] + "</td></tr>";
+	for (i=0; i<food[food_type][food_level-1].ing.length; i++) {
+		ing_field = "field" + i;
+		ing = food[food_type][food_level-1].ing[i];
+		str += 
+		"<tr id='ing"+i+"'> \
+			<td>" + ing['id'] + "</td> \
+			<td>" + ing['name'] + "</td> \
+			<td>" + ing['amount'] + "</td> \
+			<td><span></span</td> \
+			<td><input type='text' name='"+ing_field+"' value='"+ ing['price'] + "'></td> \
+		</tr>";
+	}
+	str += "</table>";
+	
+	$("#food").find("#ingredients").remove();
+	$("#food").append(str);
+}
+
 function calc() {
 with(document.getElementById("food")){
 	var cooking_set = new Array(11,12,13,14,15);
@@ -34,7 +112,7 @@ with(document.getElementById("food")){
 	var base_level = parseInt(BaseLv.value);
 	var dex = parseInt(Dex.value);
 	var luk = parseInt(Luk.value);
-	var ing_count = parseInt(IngCount.value);
+	var num_ing = food[food_type][food_level-1]["ing"].length;
 	var cook_exp = parseInt(CookExp.value);
 	var bless_check = Blessing.checked;
 	var gloria_check = Gloria.checked;
@@ -61,7 +139,7 @@ with(document.getElementById("food")){
 				      + 100 * (0 + 6 + Math.floor(cook_exp/80))  // rand=0
 					  - 400 * (food_level+10 - 11 + 1)
 					  - 10 * (100 - luk + 1)
-					  - 500 * (ing_count - 1)
+					  - 500 * (num_ing - 1)
 					  - 100 * 4;  // rand=4
 		make_per[2] = 1200 * (cooking_set[i] - 10)
 					  + 20 * (base_level + 1)
@@ -69,7 +147,7 @@ with(document.getElementById("food")){
 				      + 100 * (23 + 6 + Math.floor(cook_exp/80))  // rand=23
 					  - 400 * (food_level+10 - 11 + 1)
 					  - 10 * (100 - luk + 1)
-					  - 500 * (ing_count - 1)
+					  - 500 * (num_ing - 1)
 					  - 100 * 1;  // rand=1
 		
 		for (j=0; j<3; j++) {
@@ -86,18 +164,77 @@ with(document.getElementById("food")){
 		str += "</tr>";
 	}
 	str += "</table>";
+	out.innerHTML = str;
+}}
+
+function makefood() {
+with(document.food){
+	var cooking_set = new Array(11,12,13,14,15);
+	var kits = ["Outdoor", "Home", "Professional", "Royal"];
+	//var stats = ["str", "agi", "vit", "int", "dex", "luk"];
+	var stat = FoodType.value;
+	var food_level = parseInt(FoodLv.value);
+	var base_level = parseInt(BaseLv.value);
+	var dex = parseInt(Dex.value);
+	var luk = parseInt(Luk.value);
+	//var ing_count = parseInt(IngCount.value);
+	var num_ing = food[stat][food_level-1]["ing"].length;
+	var cook_exp = parseInt(CookExp.value);
+	var qty = parseInt(Qty.value);
+	var gospel_check = Gospel.checked;
+	var kit_cost = parseInt(KitCost.value);
+	var make_per;
+	var out = document.getElementById("makefood");
+	var str = "";
 	
-	str += "<table>";
-	var i, ing;
-	for (i=0; i<food[food_type][food_level-1].ing.length; i++) {
-		ing = food[food_type][food_level-1].ing[i];
-		str += 
-		"<tr> \
-			<td>" + ing['id'] + "<td> \
-			<td>" + ing['name'] + "<td> \
-			<td>" + ing['amount'] + "<td> \
-		</tr>";
+	qty = (/^[0-9]+/.test(qty)) ? qty : 0;
+	
+	if (gospel_check) {
+		dex += 20;
+		luk += 20;
 	}
-	str += "</table>";
+	
+	var field;
+	var i,total=0,success=0,failed=0;
+	var chance;
+	var item,price;
+	
+	total = kit_cost;
+	for (i=0; i<num_ing; i++) {
+		field = "field" + i;
+		price = parseInt(document.food[field].value);
+		total += price * food[stat][food_level-1]["ing"][i]["amount"];
+	}
+	
+	item = total;
+	str += "Total (1): " + format_num(item) + "<br/>";
+	
+	for (i=0; i<qty; i++) {
+		make_per = 1200 * (cooking_set[3] - 10)
+				   + 20 * (base_level + 1)
+				   + 20 * (dex + 1)
+				   + 100 * (getRandomInt(0,23) + 6 + Math.floor(cook_exp/80))
+				   - 400 * (food_level+10 - 11 + 1)
+				   - 10 * (100 - luk + 1)
+				   - 500 * (num_ing - 1)
+				   - 100 * getRandomInt(1,4);
+		
+		if (getRandomInt(0,10000-1)<make_per) {
+			success++;
+			str += "Success! You made Level " + food_level + " " + stat + "<br/>";
+		}
+		else {
+			failed++;
+			str += "Failed!<br/>";
+		}
+	}
+	
+	str += "You spent a total of " + format_num(total*qty) + "z<br/>"
+		+  "You made " + success + " stat food which costs you " + format_num(total*success) + "<br/>"
+		+  "You failed to create " + failed + " which costs you " + format_num(total*failed) + "<br/>";
+		
+	chance = success / qty;
+	str += "You need to charge " + format_num(Math.floor(item / chance)) + " to make back the money you spent<br/>";
+		
 	out.innerHTML = str;
 }}
