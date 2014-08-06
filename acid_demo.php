@@ -54,6 +54,9 @@
 					<td>Success Chance (%):</td>
 					<td><input type='text' name='per' /></td>
 				</tr>
+				<tr>
+					<td>Immortal Heart</td>
+					<td><input type='text' name='iheart'></td>
                 <tr>
 					<td>AD Set:</td>
 					<td><input type='text' name='ad_set' /></td>
@@ -159,7 +162,8 @@ if (!isset($_POST["submit"]))
 	exit();
 		  
 $data = array(
-		  // total # ingredients to purchase, # of ingredients per TA3, name of ingredient, cost of ingredient
+		  // [total # ingredients to purchase, # of ingredients per TA3, 
+		  //  name of ingredient, cost of ingredient, how many in possession]
           array(1, 200, "Empty Bottle",     6,   $_POST["n1"]),
 		  array(0, 0,   "Alcohol",          0,   $_POST["n2"]),
 		  array(1, 50,  "Fabric",           306, $_POST["n3"]),
@@ -175,7 +179,7 @@ $data = array(
 $adnum = $_POST["adnum"];
 $per = $_POST["per"];
 $ad_set = $_POST["ad_set"] ? $_POST["ad_set"] : 0;  // default to zero
-			  
+$iheart = $_POST["iheart"];
 $isnumeric = "^[0-9]+$";
 $isdecimal = "^([0-9]{1,3}|[0-9]{1,3}.[0-9]{1,2})$";  // 0-100, 000.00-100.00
 
@@ -188,6 +192,7 @@ $alcohol_amt = array(1,  5, 1,   5, 1);
 
 $rem = 0;	// remainder of 50
 $total_cost = 0;
+$total_spend = 0;
 
 $totals = array(
 	"fb" => array(1, 1),
@@ -214,10 +219,16 @@ else if (nothing($per) || !preg_match("/$isdecimal/", $per) || $per > 100) {
 	print "Please enter a valid percentage for success chance ##.## in range 0.00-100.00<br />";
 	exit();
 }
+else if (nothing($iheart) || !preg_match("/$isdecimal/", $iheart)) {
+	print "The cost of Immortal heart must be a positive integer<br/>";
+	exit();
+}
 else if (!preg_match("/$isnumeric/", $ad_set)) {
     print "Please enter a correct value for AD set.<br />";
     exit();
 }
+
+$data[4][3] = $iheart;  // Immortal Heart is no longer bought at npc
 
 foreach ($data as &$val) {
 	$val[4] *= 1;	// treat as integer
@@ -240,9 +251,16 @@ $rem = $adnum % 50;
 for ($i=0; $i<count($data); $i++) {
 	$data[$i][0] = $count * $data[$i][1];  // twilight count * # of ingredients per twilight
 	// apply discount
-	$data[$i][3] = sprintf("%d", $data[$i][3] * (100 - $discount[$skilllvl]) / 100);
+	if ($i != 4) {
+		$data[$i][3] = sprintf("%d", $data[$i][3] * (100 - $discount[$skilllvl]) / 100);
+	}
 	$cost = $data[$i][0] * $data[$i][3];  // cost = final total * price
 	$total_cost += $cost;
+	
+	// Calculate the cost to buy the ingredients you need
+	$bought = $data[$i][4];
+	$tobuy = $data[$i][0] - $data[$i][4];
+	$total_spend += ($tobuy > 0) ? ($tobuy*$data[$i][3]) : 0;
 }
 
 // calculate the total cost to make alcohol 
@@ -311,12 +329,12 @@ for ($i=0; $i<5; $i++) {
 		$tobuy = 0;
 		
 	print "<tr>".
-	      "<td>{$data[$i][2]}</td>".
-		  "<td>". number_format($data[$i][3]) ."</td>".  // cost per ingredient
-		  "<td>". number_format($data[$i][0]) ."</td>".
-		  "<td> (". number_format($data[$i][4]) .") ". number_format($tobuy) ."</td>".
-		  "<td>". number_format($data[$i][0]*$data[$i][3]) ."</td>".
-		  "</tr>";
+	      "<td>{$data[$i][2]}</td>
+		   <td>". number_format($data[$i][3]) ."</td>".  // cost per ingredient
+		  "<td>". number_format($data[$i][0]) ."</td>
+		   <td> (". number_format($data[$i][4]) .") ". number_format($tobuy) ."</td>
+		   <td>". number_format($data[$i][0]*$data[$i][3]) ."</td>
+		   </tr>";
 }
 
 print "<tr>".
@@ -414,6 +432,7 @@ print "<table class='txtr' border='1' style='float:left; margin-left: 10px;'>".
 	  "</table>";
 
 function format2table(&$data, $count, $discount, $skilllvl, $ad_set, $total_cost) {
+	global $total_spend;
 	print "<table class='txtr' border='1' style='float:left; margin-left: 200px;'>".
 		  "<tr>".
 			  "<td>Attempts/AD:</td>".
@@ -426,6 +445,7 @@ function format2table(&$data, $count, $discount, $skilllvl, $ad_set, $total_cost
 			  "<td>Total Amount</td>".
 			  "<td>Amount To Buy</td>".
 			  "<td>Total Cost</td>".
+			  "<td>Total Spend</td>".
 		  "</tr>";
 		  
 		  
@@ -433,20 +453,21 @@ function format2table(&$data, $count, $discount, $skilllvl, $ad_set, $total_cost
 		$bought = $v[4];  // how many of the ingredient you have
 		$tobuy = $v[0] - $v[4];  // how many more of it you need
 		if ($tobuy < 0) {
-			$v[4] = $tobuy * -1;
+			$v[4] = $tobuy * -1;  // ingredients carry over
 			$tobuy = 0;
 		}
 		else {
 			$v[4] = 0;
 		}
 			
-		print "<tr>".
-			  "<td>$v[2]</td>".
-			  "<td>". number_format($v[3]) ."</td>".
-			  "<td>". number_format($v[0]) ."</td>".
-			  "<td> (". number_format($bought) .") ". number_format($tobuy) ."</td>".
-			  "<td>". number_format($v[0]*$v[3]) ."</td>".
-			  "</tr>";
+		print "<tr>
+			   <td>$v[2]</td>
+			   <td>". number_format($v[3]) ."</td>
+			   <td>". number_format($v[0]) ."</td>
+			   <td> (". number_format($bought) .") ". number_format($tobuy) ."</td>
+			   <td>". number_format($v[0]*$v[3]) ."</td>
+			   <td>". number_format($tobuy * $v[3]) ."</td>
+			   </tr>";
 	}
 
 	/* The actual costs of making the AD is total_cost + alcohol_50 - alcohol_sold
@@ -469,16 +490,19 @@ function format2table(&$data, $count, $discount, $skilllvl, $ad_set, $total_cost
 	$profit = $total_sales - $operating_cost;
 
 	format2row("Cost to make:", $operating_cost);
+	print "<tr><td>Formula:</td><td colspan='4'>".
+		number_format($total_cost) ." + ". number_format($alcohol_50) ." - ". number_format($alcohol_sold) ."</td></tr>";
 	format2row("Total Sales:", $total_sales);
+	format2row("To spend:", $total_spend);
 	format2row("Profit:", $profit);
 	print "</table>";
 }
 
 function format2row($caption, $amount) {
-print "<tr>".
-      "<td>$caption</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>".
-	  "<td>". number_format($amount) ."</td>".
-	  "</tr>";
+print "<tr>
+       <td>$caption</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
+	   <td>". number_format($amount) ."</td>
+	   </tr>";
 }
 
 ?>
