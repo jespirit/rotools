@@ -23,6 +23,7 @@ include_once 'functions.php';
 
 	<body>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src='script/food.js' type='text/javascript'></script>
 	
 	<!--  Header -->
 	<div id="header"></div>
