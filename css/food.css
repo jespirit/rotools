@@ -1,0 +1,21 @@
+
+div#makefood {
+	height: 300px;
+	overflow: auto;
+}
+
+#ingredients {
+	float: left;
+}
+
+#food {
+	float: left;
+}
+
+#output {
+	float: left;
+}
+
+#makefood {
+	float: left;
+}

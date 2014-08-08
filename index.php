@@ -16,14 +16,14 @@ include_once 'functions.php';
 		<title>
 			<?php echo htmlformat($CONFIG_name); ?> - Control Panel
 		</title>
-		<link rel="stylesheet" type="text/css" href="./ceres.css">
+		<link rel="stylesheet" type="text/css" href="ceres.css">
+		<link rel="stylesheet" type="text/css" href="css/food.css">
 
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script type="text/javascript" language="javascript" src="ceres.js"></script>
 	</head>
 
 	<body>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	
 	<!--  Header -->
 	<div id="header"></div>
 	

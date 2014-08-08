@@ -6,8 +6,8 @@ include_once 'query.php'; // imports queries
 include_once 'functions.php';
 
 // Category name, required gm level
-$mainmenu[0] = array($lang['MENU_HOME'],		-1);
-$mainmenu[1] = array($lang['MENU_MYACCOUNT'],	 0);
+$mainmenu[0] = array("HOME",					-1);
+$mainmenu[1] = array("FOOD",	 				 0);
 $mainmenu[2] = array($lang['MENU_MYCHARS'],		 0);
 $mainmenu[3] = array($lang['MENU_RANKING'],		-1);
 $mainmenu[4] = array($lang['MENU_INFORMATION'],	-1);
@@ -16,36 +16,7 @@ $mainmenu[6] = array('Logs',					$CONFIG['cp_admin']);
 $mainmenu[7] = array('Administration',			$CONFIG['cp_admin']);
 
 // Page name, page link, category id
-$submenu[] = array($lang['MENU_MESSAGE'],		'motd.php',				0);
-$submenu[] = array($lang['MENU_CHANGEPASS'],	'password.php',			1);
-$submenu[] = array($lang['MENU_CHANGEMAIL'],	'changemail.php',		1);
-$submenu[] = array($lang['MENU_TRANFMONEY'],	'money.php',			$CONFIG_money_transfer?2:-1);
-$submenu[] = array($lang['MENU_CHANGESLOT'],	'slot.php',				$CONFIG_set_slot?2:-1);
-$submenu[] = array($lang['MENU_MARRIAGE'],		'marriage.php',			2);
-$submenu[] = array($lang['MENU_PLAYERLADDER'],	'ladder.php',			3);
-$submenu[] = array($lang['MENU_GUILDLADDER'],	'guild.php',			3);
-$submenu[] = array($lang['MENU_ZENYLADDER'],	'top100zeny.php',		3);
-$submenu[] = array($lang['MENU_WHOSONLINE'],	'whoisonline.php',		4);
-$submenu[] = array('Features',					'feature.php',			4);
-$submenu[] = array('Customizations',			'custom.php',			4);
-//$submenu[] = array($lang['MENU_ABOUT'],			'about.php',			4);
-$submenu[] = array($lang['MENU_RESETPOS'],		'position.php',			$CONFIG_reset_enable?5:-1);
-$submenu[] = array($lang['MENU_RESETLOOK'],		'resetlook.php',		$CONFIG_reset_look?5:-1);
-//$submenu[] = array($lang['MENU_LINKS'],			'links.php',			0);
-$submenu[] = array('Downloads',					'downloads.php',		0);
-$submenu[] = array('Atcommand Logs',			'logatcommand.php',		6);
-$submenu[] = array('Cash Logs',					'logcash.php',			6);
-$submenu[] = array('Char Logs',					'logchar.php',			6);
-$submenu[] = array('Dead Branch Logs',			'logbranch.php',		6);
-$submenu[] = array('Item Logs',					'logitems.php',			6);
-$submenu[] = array('Login Logs',				'loglogin.php',			6);
-$submenu[] = array('MVP Logs',					'logmvp.php',			6);
-$submenu[] = array('NPC Logs',					'lognpc.php',			6);
-$submenu[] = array('Zeny Logs',					'logzeny.php',			6);
-$submenu[] = array('Accounts',					'adminaccounts.php',	7);
-$submenu[] = array('Chars',						'adminchars.php',		7);
-//$submenu[] = array('Bans/Blocks',				'',						7);
-$submenu[] = array('Applications',				'admin-application.php',	7);
+$submenu[] = array("Food",		'food.php',				0);
 
 
 $pos = 0;

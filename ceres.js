@@ -17,18 +17,22 @@ function LINK_ajax(http, div_name) { //função para links
 		if (LINK_xmlhttp.readyState == 4) {
 			document.getElementById('load_div').style.visibility="hidden";
 
-			if (LINK_xmlhttp.responseText.indexOf("<script type=\"text/javascript\">") > -1) {
-				var x = LINK_xmlhttp.responseText.indexOf("<script type=\"text/javascript\">") + "<script type=\"text/javascript\">".length;
-				var y = LINK_xmlhttp.responseText.indexOf("</script>") - x;
-				eval(LINK_xmlhttp.responseText.substr(x, y));
-			}
-
 			if (LINK_xmlhttp.responseText.indexOf('ALERT|') > -1) {
 				var x = LINK_xmlhttp.responseText.indexOf('ALERT|') + "ALERT|".length;
 				var y = LINK_xmlhttp.responseText.indexOf('|ENDALERT') - x;
 				window.alert(LINK_xmlhttp.responseText.substr(x , y));
-			} else
+			} else {
 				document.getElementById(div_name).innerHTML = LINK_xmlhttp.responseText + ' ';
+			
+				// Parse any Javascript code blocks
+				$("#"+div_name + " script").each(function (index) {
+					if (this.hasAttribute("src")) {
+						$.getScript($(this).attr("src"));
+					} else {  // A regular script tag
+						$.globalEval(this.innerHTML);  // Execute code within the global context
+					}
+				});
+			}
 		}
 	}
 
