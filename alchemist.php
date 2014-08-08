@@ -1,110 +1,79 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-
-<head>
-	<title>Alchemist Ranking</title>
-	<link rel="stylesheet" type="text/css" href="/css/style.css" />
-	<style type="text/css">
-		//#twilight-chk { display: none }
-	</style>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-	<script>
-	function toggleMenu(objID) {
-		if (!document.getElementById) return;
-		var ob = document.getElementById(objID).style;
-		ob.display = (ob.display == 'block')?'none':'block';
-	}
-	
-	$(document).ready(function() {
-		$("[name='potion']").change(function() {
-			var x = $(this).val();
-			if (x == 4) {  // white potion
-				$("#twilight-chk").css("display", "block");
-				$("#twilight").removeAttr("disabled");  // enable checkbox
-			}
-			else {
-				$("#twilight-chk").css("display", "none");
-				$("#twilight").attr("disabled", true);  // disable checkbox
-			}
-		});
-	});
-	</script>
-</head>
-
-<body>
-<div id="wrapper">
-	<div id="header">
-		<h1>Ragnarok Tools</h1>
-	</div>
-	
-	<div id="left">
-		<div class="block">
-			<h2>Links</h2>
-			<ul>
-				<li><a href="/index.html">Home</a></li>
-				<li><a href="/exp.html">Base/Job Experience Calculator</a></li>
-				<li><a href="/php/alchemist.php">Alchemist Ranking</a></li>
-				<li><a href="/php/refine.php">Refine Simulator</a></li>
-				<li><a href="/php/equip.php">Equipment Calculator</a></li>
-				<li><a href="/php/whiteslim.php">White Slim Potion</a></li>
-				<li><a href="/php/acid_demo.php">Acid Demonstration</a></li>
-			</ul>
-		</div>
-	</div>
-
-	<div id="main">
-		<h2>Alchemist Ranking</h2>
-		<form name='alch' method='post' action='alchemist.php'>
-			<table>
-				<tr>
-					<td>Success Chance (%):</td>
-					<td><input type='text' name='per' /></td>
-					<td>Enter a percentage (0-100%)</td>
-				</tr>
-                <?php 
-                    $types = array('Red, Yellow, White Potion', 'Blue Potion', 
-                                   'Condensed Red Potion', 'Condensed Yellow Potion', 'Condensed White Potion');
-                                   
-					for ($i=0; $i<count($types); $i++) {
-						if ($i == 0)	// default selected value
-							print "<tr><td><input type='radio' name='potion' checked='checked' value='$i' />" . $types[$i] . "</td></tr>";
-						else
-							print "<tr><td><input type='radio' name='potion' value='$i' />" . $types[$i] . "</td></tr>";
-					}
-				?>
-				<tr>
-					<td>Amount:</td>
-					<td><input type='text' name='qty' /></td>
-					<td>
-						<div id='twilight-chk'>
-							<input type='checkbox' name='twilight' id='twilight' value='1' disabled='disabled' />Twilight?
-						</div>
-					</td>
-				</tr>
-			</table>
-
-			<input type='submit' name='submit' value='Submit' />
-		</form>
-	</div>
-	
-	<div id="footer">
-		<p>Custom Website 2012-2012</p>
-	</div>
-</div>
-</body>
-</html>
-
 <?php
 
-// check if submit button was clicked
-if (!isset($_POST["submit"]))
-	exit();
+session_start();
+include_once 'config.php'; // loads config variables
+include_once 'query.php'; // imports queries
+include_once 'functions.php';
 
-$per = $_POST["per"];
-$qty = $_POST["qty"];
-$potion = $_POST["potion"];
+if (!isset($GET_frm_name)) {
+
+echo <<<EOF
+<script>
+function toggleMenu(objID) {
+	if (!document.getElementById) return;
+	var obj = document.getElementById(objID).style;
+	obj.display = (obj.display == 'block')?'none':'block';
+}
+
+// wrap in parens for the function to be treated as an expression and not a declaration
+(function() {
+	$("[name='potion']").change(function() {
+		var x = $(this).val();
+		if (x == 4) {  // white potion
+			$("#twilight-chk").css("display", "block");
+			$("#twilight").removeAttr("disabled");  // enable checkbox
+		}
+		else {
+			$("#twilight-chk").css("display", "none");
+			$("#twilight").attr("disabled", true);  // disable checkbox
+		}
+	});
+}());
+</script>
+	
+<h2>Alchemist Ranking</h2>
+<form id="alchemist" name="alchemist" onsubmit="return GET_ajax('alchemist.php', 'alchemist_div', 'alchemist');">
+	<table>
+		<tr>
+			<td>Success Chance (%):</td>
+			<td><input type='text' name='per' /></td>
+			<td>Enter a percentage (0-100%)</td>
+		</tr>
+EOF;
+			$types = array('Red, Yellow, White Potion', 'Blue Potion',
+						   'Condensed Red Potion', 'Condensed Yellow Potion', 'Condensed White Potion');
+						   
+			for ($i=0; $i<count($types); $i++) {
+				if ($i == 0)	// default selected value
+					print "<tr><td><input type='radio' name='potion' checked='checked' value='$i' />" . $types[$i] . "</td></tr>";
+				else
+					print "<tr><td><input type='radio' name='potion' value='$i' />" . $types[$i] . "</td></tr>";
+			}
+			
+echo <<<EOF
+		<tr>
+			<td>Amount:</td>
+			<td><input type='text' name='qty' /></td>
+			<td>
+				<div id='twilight-chk'>
+					<input type='checkbox' name='twilight' id='twilight' value='1' disabled='disabled' />Twilight?
+				</div>
+			</td>
+		</tr>
+	</table>
+
+	<input type='submit' name='submit' value='Submit' />
+</form>
+
+<div id='alchemist_div'></div>
+EOF;
+
+exit();
+}
+
+$per = $GET_per;
+$qty = $GET_qty;
+$potion = $GET_potion;
 $nherbs = 0;    // # of herbs
 $base_per = 0;
 
@@ -165,7 +134,7 @@ for ($i=0; $i<5; $i++) {
     }
 }
 
-if (isset($_POST["twilight"])) {
+if ($GET_twilight) {
 	// quantity now represents how many Twilight Alchemys to perform
 	$twilight = 200;
 }
@@ -226,31 +195,32 @@ for ($x=0; $x<$qty; $x++) {
 
 $pointrate = sprintf("%.2f", $fame/($qty*$twilight));
 
-print "<table border='1'>".
-      "<tr>".
-      "   <td>Type</td>".
-      "   <td>". $types[$potion] ."</td>".
-      "</tr>".
-      "<tr>".
-      "   <td>Potions Made</td>".
-      "   <td>". number_format($pots) ."</td>".
-      "</tr>".
-      "<tr>".
-      "   <td>Attempts</td>".
-      "   <td>". number_format($qty) ." / ". number_format($twilight) ."</td>".
-      "</tr>".
-      "<tr>".
-      "   <td>Fame Points</td>".
-      "   <td>". number_format($fame) ."</td>".
-      "</tr>".
-      "<tr>".
-      "   <td>Success Rate (%)</td>".
-      "   <td>". sprintf("%.2f%% %.2f%% %.2f%%", $rates[$potion][0]/100, $rates[$potion][1]/100, $rates[$potion][2]/100) ."</td>".
-      "</tr>".
-	  "<tr>".
-      "   <td>Fame Points/Attempts</td>".
-      "   <td>". $pointrate ."</td>".
-      "</tr>".
-	  "</table>";
+echo '
+<table border="1">
+	<tr>
+		<td>Type</td>
+		<td>'. $types[$potion] .'</td>
+	</tr>
+	<tr>
+		<td>Potions Made</td>
+		<td>'. number_format($pots) .'</td>
+	</tr>
+	<tr>
+		<td>Attempts</td>
+		<td>'. number_format($qty) / number_format($twilight) .'</td>
+	</tr>
+	<tr>
+		<td>Fame Points</td>
+		<td>'. number_format($fame) .'</td>
+	</tr>
+	<tr>
+		<td>Success Rate (%)</td>
+		<td>'. sprintf("%.2f%% %.2f%% %.2f%%", $rates[$potion][0]/100, $rates[$potion][1]/100, $rates[$potion][2]/100) .'</td>
+	</tr>
+	<tr>
+		<td>Fame Points/Attempts</td>
+		<td>'. $pointrate .'</td>
+	</tr>
+</table>';
 
 ?>

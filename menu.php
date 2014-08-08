@@ -8,7 +8,7 @@ include_once 'functions.php';
 // Category name, required gm level
 $mainmenu[0] = array("HOME",					-1);
 $mainmenu[1] = array("FOOD",	 				 0);
-$mainmenu[2] = array($lang['MENU_MYCHARS'],		 0);
+$mainmenu[2] = array("ALCHEMIST",				 0);
 $mainmenu[3] = array($lang['MENU_RANKING'],		-1);
 $mainmenu[4] = array($lang['MENU_INFORMATION'],	-1);
 $mainmenu[5] = array($lang['MENU_PROBLEMS'],	 0);
@@ -16,8 +16,8 @@ $mainmenu[6] = array('Logs',					$CONFIG['cp_admin']);
 $mainmenu[7] = array('Administration',			$CONFIG['cp_admin']);
 
 // Page name, page link, category id
-$submenu[] = array("Food",		'food.php',				0);
-
+$submenu[] = array("Food",		'food.php',				1);
+$submenu[] = array("Alchemist",	'alchemist.php',		2);
 
 $pos = 0;
 $menu = 'var mainmenu = new Array(';
