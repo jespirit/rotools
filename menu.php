@@ -24,17 +24,15 @@ $menu = 'var mainmenu = new Array(';
 $sub  = 'var submenu = new Array("", "", -1';
 
 foreach ($mainmenu as $i => $mainmenudata) {
-	if ($mainmenudata[1] < 0 || (isset($_SESSION[$CONFIG_name.'level']) && $_SESSION[$CONFIG_name.'level'] >= $mainmenudata[1])) {
-		if ($pos > 0)
-			$menu = $menu.', ';
-		$menu = $menu."\"".$mainmenudata[0].'"';
-		foreach ($submenu as $j => $submenudata) {
-			if ($submenudata[2] == $i) {
-				$sub = $sub.', "'.$submenudata[0].'"'.', "'.$submenudata[1].'", '.$pos;
-			}
+	if ($pos > 0)
+		$menu = $menu.', ';
+	$menu = $menu."\"".$mainmenudata[0].'"';
+	foreach ($submenu as $j => $submenudata) {
+		if ($submenudata[2] == $i) {
+			$sub = $sub.', "'.$submenudata[0].'"'.', "'.$submenudata[1].'", '.$pos;
 		}
-		$pos++;
 	}
+	$pos++;
 }
 
 $menu = $menu.');';

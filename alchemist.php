@@ -17,6 +17,9 @@ function toggleMenu(objID) {
 
 // wrap in parens for the function to be treated as an expression and not a declaration
 (function() {
+	$("#twilight-chk").css("display", "none");
+	$("#twilight").removeAttr("disabled");  // enable checkbox
+	
 	$("[name='potion']").change(function() {
 		var x = $(this).val();
 		if (x == 4) {  // white potion
@@ -26,6 +29,7 @@ function toggleMenu(objID) {
 		else {
 			$("#twilight-chk").css("display", "none");
 			$("#twilight").attr("disabled", true);  // disable checkbox
+			$("#twilight").attr("checked", false);
 		}
 	});
 }());
