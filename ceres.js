@@ -86,18 +86,22 @@ function POST_ajax(http, div_name, frm_name) { //função para posts
 				frm.elements[i].disabled = false;
 			}
 
-			if (POST_xmlhttp.responseText.indexOf("<script type=\"text/javascript\">") > -1) {
-				var x = POST_xmlhttp.responseText.indexOf("<script type=\"text/javascript\">") + "<script type=\"text/javascript\">".length;
-				var y = POST_xmlhttp.responseText.indexOf("</script>") - x;
-				eval(POST_xmlhttp.responseText.substr(x, y));
-			}
-
 			if (POST_xmlhttp.responseText.indexOf('ALERT|') > -1) {
 				var x = POST_xmlhttp.responseText.indexOf('ALERT|') + "ALERT|".length;
 				var y = POST_xmlhttp.responseText.indexOf('|ENDALERT') - x;
 				window.alert(POST_xmlhttp.responseText.substr(x , y));
-			} else
+			} else {
 				document.getElementById(div_name).innerHTML = POST_xmlhttp.responseText + ' ';
+				
+				// Parse any Javascript code blocks
+				$("#"+div_name + " script").each(function (index) {
+					if (this.hasAttribute("src")) {
+						$.getScript($(this).attr("src"));
+					} else {  // A regular script tag
+						$.globalEval(this.innerHTML);  // Execute code within the global context
+					}
+				});
+			}
 		}
 	}
 
@@ -154,19 +158,23 @@ function GET_ajax(http, div_name, frm_name) { //função para gets
 
 				frm.elements[i].disabled = false;
 			}
-	
-			if (GET_xmlhttp.responseText.indexOf("<script type=\"text/javascript\">") > -1) {
-				var x = GET_xmlhttp.responseText.indexOf("<script type=\"text/javascript\">") + "<script type=\"text/javascript\">".length;
-				var y = GET_xmlhttp.responseText.indexOf("</script>") - x;
-				eval(GET_xmlhttp.responseText.substr(x, y));
-			}
 			
 			if (GET_xmlhttp.responseText.indexOf('ALERT|') > -1) {
 				var x = GET_xmlhttp.responseText.indexOf('ALERT|') + "ALERT|".length;
 				var y = GET_xmlhttp.responseText.indexOf('|ENDALERT') - x;
 				window.alert(GET_xmlhttp.responseText.substr(x , y));
-			} else
+			} else {
 				document.getElementById(div_name).innerHTML = GET_xmlhttp.responseText + ' ';
+			
+				// Parse any Javascript code blocks
+				$("#"+div_name + " script").each(function (index) {
+					if (this.hasAttribute("src")) {
+						$.getScript($(this).attr("src"));
+					} else {  // A regular script tag
+						$.globalEval(this.innerHTML);  // Execute code within the global context
+					}
+				});
+			}
 		}
 	}
 
