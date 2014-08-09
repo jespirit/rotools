@@ -68,6 +68,11 @@ function POST_ajax(http, div_name, frm_name) { //função para posts
 			else
 				frm.elements[i].value = 0;
 		}
+		if (frm.elements[i].type == "radio") {
+			if (!frm.elements[i].checked)  // only include checks radio buttons
+				continue;
+		}
+		
 		url = url + "&" + frm.elements[i].name + "=" + escape(frm.elements[i].value);
 	}
 
@@ -140,6 +145,10 @@ function GET_ajax(http, div_name, frm_name) { //função para gets
 			else
 				frm.elements[i].value = 0;
 		}
+		if (frm.elements[i].type == "radio") {
+			if (!frm.elements[i].checked)  // only include checks radio buttons
+				continue;
+		}
 		url = url + "&" + frm.elements[i].name + "=" + escape(frm.elements[i].value);
 	}
 
@@ -151,8 +160,8 @@ function GET_ajax(http, div_name, frm_name) { //função para gets
 			document.getElementById('load_div').style.visibility="hidden";
 
 			for (i = 0; i < frm.elements.length; i++) {
-				if (frm.elements[i].type == "checkbox")
-					frm.elements[i].checked = false;
+				//if (frm.elements[i].type == "checkbox")
+					//frm.elements[i].checked = false;
 				if (frm.elements[i].type == "password")
 					frm.elements[i].value = "";
 
