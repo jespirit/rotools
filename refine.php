@@ -17,11 +17,12 @@ echo <<<EOF
 		<tr>
 			<td>Weapon Level:</td>
 			<td>
-				<select name='wlvl'>
-				<option value='0'>Armor</option>
+				<select name='wlvl' onchange="LINK_ajax('ajax/update-equip-refine.php?wlvl='+this.value, 'equip-refine', '');">
+				<option value='0'>-</option>
+				<option value='1'>Armor</option>
 EOF;
 			foreach (range(1, 4) as $x) {
-				printf("<option value='%d'>%d</option>", $x, $x);
+				printf("<option value='%d'>%d</option>", $x+1, $x);
 			}
 echo <<<EOF
 				</select>
@@ -44,29 +45,7 @@ echo <<<EOF
 	<table>
 		<tr>
 			<td>Upgrade:</td>
-			<td>
-				<table>
-				<tr>
-EOF;
-		foreach (range(5, 10) as $x) {
-			print "<td style='text-align: center;'>+$x</td>";
-		}
-echo '
-			</tr>
-			<tr>';
-			
-		foreach (range(5, 10) as $n) {
-			if ($n == 5)	// default selected value
-				print "<td class='select-upgrade'><input type='radio' name='rtarget' checked='checked' value='$n'></td>";
-			else
-				print "<td class='select-upgrade'><input type='radio' name='rtarget' value='$n'></td>";
-		}
-echo '
-				</tr>
-				</table>
-			</td>';
-
-echo <<<EOF
+			<td id='equip-refine'></td>
 		</tr>
 	</table>
 	<input type='submit' name='submit' value='Refine' />
@@ -101,27 +80,9 @@ $eqprice = $GET_eqprice;
 $rtarget = $GET_rtarget;
 $eluprice = $GET_eluprice;
 
-$alpha = "^[a-zA-Z \[\]0-9()]+$";  // space, square brackets are allowed
+$alpha = "^[a-zA-Z_ \[\]0-9()]+$";  // space, square brackets are allowed
                                  // ie. Guard[1], Shoes[1]
 $integer_only = "^[0-9]+$";
-
-$bonus = ($jlvl-50)/2;     // +% from job bonus
-//$bonus = sprintf("%d", $bonus); // just get as integer
-
-if ($wlvl == 0)
-    $bonus = 0;     // refining an armor
-
-// Apply job level bonus
-for ($i=5; $i<=10; $i++) {
-    //print $percentrefinery[$wlvl][$i] . " += " . $bonus . "<br />";
-    $percentrefinery[$wlvl][$i] += $bonus;
-    
-    // cap the percentages
-    if ($percentrefinery[$wlvl][$i] < 0)
-        $percentrefinery[$wlvl][$i] = 0;
-    else if ($percentrefinery[$wlvl][$i] > 100)
-        $percentrefinery[$wlvl][$i] = 100;
-}
 
 // validate form fields here
 $valid = true;
@@ -130,7 +91,7 @@ if (empty($eqname)) {
     print "You did not set an equipment name.\n";
     $valid = false;
 } else if (!preg_match("/$alpha/", $eqname)) {
-    print "You are only allowed to use letters of the alphabet a-z\n";
+    print "You are only allowed to use the following characters: / a-zA-Z0-9[]()/\n";
     $valid = false;
 } else if (nothing($eqprice)) {
     print "You left the equipment price empty\n";
@@ -149,6 +110,31 @@ if (empty($eqname)) {
 
 if (!$valid) {
     exit();
+}
+
+if ($wlvl == 0) {
+	print "Error. Please select a weapon level.<br />";
+	exit();
+}
+
+$wlvl--;
+
+$bonus = ($jlvl-50)/2;     // +% from job bonus
+//$bonus = sprintf("%d", $bonus); // just get as integer
+
+if ($wlvl == 0)
+    $bonus = 0;     // refining an armor
+
+// Apply job level bonus
+for ($i=5; $i<=10; $i++) {
+    //print $percentrefinery[$wlvl][$i] . " += " . $bonus . "<br />";
+    $percentrefinery[$wlvl][$i] += $bonus;
+    
+    // cap the percentages
+    if ($percentrefinery[$wlvl][$i] < 0)
+        $percentrefinery[$wlvl][$i] = 0;
+    else if ($percentrefinery[$wlvl][$i] > 100)
+        $percentrefinery[$wlvl][$i] = 100;
 }
 
 $count = 0;
