@@ -9,7 +9,7 @@ if (!isset($GET_frm_name)) {
 
 print <<<EOF
 <h1>Equipment Refinery</h1>
-<form id='equip_form' name='equip_form' onsubmit="return GET_ajax('equip.php', 'equip_div', 'equip_form')";>
+<form id='equip_form' name='equip_form' onsubmit="return GET_ajax('equip.php', 'equip_div', 'equip_form');">
 <table>
 	<tr>
 		<td>Base Price:</td>
@@ -44,11 +44,9 @@ print <<<EOF
 			</select>
 		</td>
 	</tr>
-	
 </table>
 
 <input type="submit" name="submit" value="Submit" />
-
 </form>
 
 <div id="equip_div"></div>
@@ -61,11 +59,11 @@ exit();
 $percentrefinery = 
     array(
         //       +1   +2   +3   +4   +5   +6   +7   +8  +9  +10
-        array(0, 100, 100, 100, 100, 60,  40,  40,  20, 20, 10),	// Armor
-        array(0, 100, 100, 100, 100, 100, 100, 100, 60, 40, 20),	// Level 1
-        array(0, 100, 100, 100, 100, 100, 100, 60,  40, 20, 20),	// Level 2
-        array(0, 100, 100, 100, 100, 100, 60,  50,  20, 20, 20),	// Level 3
-        array(0, 100, 100, 100, 100, 60,  40,  40,  20, 20, 10),	// Level 4
+        array(5, 100, 100, 100, 100, 60,  40,  40,  20, 20, 10),	// Armor
+        array(8, 100, 100, 100, 100, 100, 100, 100, 60, 40, 20),	// Level 1
+        array(7, 100, 100, 100, 100, 100, 100, 60,  40, 20, 20),	// Level 2
+        array(6, 100, 100, 100, 100, 100, 60,  50,  20, 20, 20),	// Level 3
+        array(5, 100, 100, 100, 100, 60,  40,  40,  20, 20, 10),	// Level 4
     );
    
 $service_fees = array(2000, 50, 200, 5000, 20000);
@@ -111,28 +109,47 @@ for ($i=5; $i<=10; $i++) {
 
 print_table();
 
-// +5 and above chances, [60, 60*40, 60*40*40, 60*40*40*20, 60*40*40*20*20, 60*40*40*20*20*10]
-$chances = array(0, 100, 100, 100, 100, $percentrefinery[$wlvl][5], 1, 1, 1, 1, 1);
-$denoms =  array(0, 1, 1, 1, 1, 100, pow(100, 2), pow(100, 3), pow(100, 4), pow(100, 5), pow(100, 6));
+$safe = $percentrefinery[$wlvl][0];
+$chances = array();
+$denoms = array();
 
-// Calculate the chances of refining an equipment from +5 through +10
-foreach (range(6, 10) as $v) {
+$chances[$safe] = $percentrefinery[$wlvl][$safe];
+$denoms[$safe] = 100;
+
+// Calculate the chances of refining an equipment from safe limit to +10
+// +5 and above chances, [60, 60*40, 60*40*40, 60*40*40*20, 60*40*40*20*20, 60*40*40*20*20*10]
+foreach (range($safe+1, 10) as $v) {
     $chances[$v] = $percentrefinery[$wlvl][$v] * $chances[$v-1];
+	$denoms[$v] = pow(100, $v-$safe+1);  // 100^2, 100^3
 }
 
-printf("Base Price: %s Ori/Elu Price: %s Weapon Lvl: %d Job Lvl: %d <br />",
-	   number_format($base), number_format($ori), $wlvl, $jlvl);
+print "
+	<table border='1' cellpadding='2'>
+		<caption>Info</caption>
+		<tr>
+			<td>Base Price:</td>
+			<td>". number_format($base) ."</td></tr>
+		<tr>
+			<td>Ori/Elu Price:</td>
+			<td>". number_format($ori) ."</td></tr>
+		<tr>
+			<td>Weapon Lvl:</td>
+			<td>$wlvl</td></tr>
+		<tr>
+			<td>Job Lvl:</td>
+			<td>$jlvl</td></tr>
+	</table>";
 
-print "<br />";
-print "<table border='1' cellpadding='2'>";
-print "<caption>Chance</caption>";
-print "<tr>".
-      "<td>Refine</td><td>Percent (%)</td><td>1 in x</td><td>Selling price (no fees)</td>".
-	  "<td># of Oridecons/Eluniums</td>".
-	  "<td>Total Cost = equipment cost + item cost + service fees</td>".
-	  "</tr>";
+print "
+		<table border='1' cellpadding='2'>
+		<caption>Refine Rates</caption>
+		<tr>
+		   <td>Refine</td><td>Percent (%)</td><td>1 in x</td><td>Selling price (no fees)</td>
+		   <td># of Oridecons/Eluniums</td>
+		   <td>Total Cost = equipment cost + item cost + service fees</td>
+		</tr>";
 	  
-for ($i=5; $i<=10; $i++) {
+for ($i=$safe; $i<=10; $i++) {
     $per = $chances[$i] / $denoms[$i];
     $chance = sprintf("%.2f",$denoms[$i] / $chances[$i]);
 	$dchance = sprintf("%d", $chance);	// integer form of $chance, rounded down
@@ -167,6 +184,7 @@ function print_table()
     // are not visible, you have to declare them with the global keyword.
     global $percentrefinery;    // now refer to the file-scope array
     global $names;
+	global $wlvl;
     
     //$x = $percentrefinery[0][4];
     
@@ -184,8 +202,12 @@ function print_table()
         print "<th>+$i</th>";
         
     for ($i=0; $i<=4; $i++) {
-        print "<tr>
-			   <td>". $names[$i] ."</td>";
+		if ($i == $wlvl) {
+			print "<tr style='background-color: #ffff0f'>";
+		} else {
+			print "<tr>";
+		}
+		print "<td>". $names[$i] ."</td>";
         for ($j=1; $j<=10; $j++) {
             print "<td>" . $percentrefinery[$i][$j] . "</td>";
         }
