@@ -1,94 +1,63 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-
-<head>
-	<title>Equipment Refinery</title>
-	<link rel="stylesheet" type="text/css" href="/css/style.css" />
-</head>
-
-<body>
-<div id="wrapper">
-	<div id="header">
-		<h1>Ragnarok Tools</h1>
-	</div>
-	
-	<div id="left">
-		<div class="block">
-			<h2>Links</h2>
-			<ul>
-				<li><a href="/index.html">Home</a></li>
-				<li><a href="/exp.html">Base/Job Experience Calculator</a></li>
-				<li><a href="/php/alchemist.php">Alchemist Ranking</a></li>
-				<li><a href="/php/refine.php">Refine Simulator</a></li>
-				<li><a href="/php/equip.php">Equipment Calculator</a></li>
-				<li><a href="/php/whiteslim.php">White Slim Potion</a></li>
-				<li><a href="/php/acid_demo.php">Acid Demonstration</a></li>
-			</ul>
-		</div>
-	</div>
-
-	<div id="main">
-		<h1>Equipment Refinery</h1>
-		<form name='eqinfo' method='post' action='equip.php'>
-
-		<table>
-			<tr>
-				<td>Base Price:</td>
-				<td><input type='text' name='base' /></td>
-			</tr>
-			<tr>
-				<td>Oridecon/Elunium Price:</td>
-				<td><input type='text' name='ori' /></td>
-			</tr>
-			<tr>
-				<td>Weapon Level:</td>
-				<td>
-					<select name='wlvl'>
-					<option value='0'>Armor</option>
-					<option value='1'>1</option>
-					<option value='2'>2</option>
-					<option value='3'>3</option>
-					<option value='4'>4</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Job Level:</td>
-				<td>
-					<select name='jlvl'>
-					<?php
-						foreach (range(1,70) as $n) {
-							printf("<option value='%d'>%d</option>", $n, $n);
-						}
-					?>
-					</select>
-				</td>
-			</tr>
-			
-		</table>
-
-		<input type='submit' name="submit" value='Submit' />
-
-		</form>
-	</div>
-
-	<div id="footer">
-		Custom Website 2012-2012
-	</div>
-</div>
-
-</body>
-</html>
-
 <?php
 
-// check if submit button was clicked
-if (!isset($_POST["submit"]))
-	exit();
+session_start();
+include_once 'config.php'; // loads config variables
+include_once 'query.php'; // imports queries
+include_once 'functions.php';
 
-// 5x11
+if (!isset($GET_frm_name)) {
+
+print <<<EOF
+<h1>Equipment Refinery</h1>
+<form id='equip_form' name='equip_form' onsubmit="return GET_ajax('equip.php', 'equip_div', 'equip_form')";>
+<table>
+	<tr>
+		<td>Base Price:</td>
+		<td><input type='text' name='base' /></td>
+	</tr>
+	<tr>
+		<td>Oridecon/Elunium Price:</td>
+		<td><input type='text' name='ori' /></td>
+	</tr>
+	<tr>
+		<td>Weapon Level:</td>
+		<td>
+			<select name='wlvl'>
+			<option value='0'>Armor</option>
+			<option value='1'>1</option>
+			<option value='2'>2</option>
+			<option value='3'>3</option>
+			<option value='4'>4</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>Job Level:</td>
+		<td>
+			<select name='jlvl'>
+EOF;
+			foreach (range(1,70) as $n) {
+				printf("<option value='%d'>%d</option>", $n, $n);
+			}
+			
+print <<<EOF
+			</select>
+		</td>
+	</tr>
+	
+</table>
+
+<input type="submit" name="submit" value="Submit" />
+
+</form>
+
+<div id="equip_div"></div>
+EOF;
+
+exit();
+}
+
+// 5 x 11 refine success rate table
 $percentrefinery = 
     array(
         //       +1   +2   +3   +4   +5   +6   +7   +8  +9  +10
@@ -100,13 +69,12 @@ $percentrefinery =
     );
    
 $service_fees = array(2000, 50, 200, 5000, 20000);
-$names = array("Armor", "Weapons Lv 1", "Weapons Lv 2", "Weapons Lv 3", "Weapons Lv 4");
-    
+$names = array("Armor", "Weapon Lv 1", "Weapon Lv 2", "Weapon Lv 3", "Weapon Lv 4");
 
-$base = $_POST["base"];  // Base price of equipment
-$wlvl = $_POST["wlvl"];  // Weapon level 1-4, or armor
-$ori = $_POST["ori"];  // Market price of oridecon
-$jlvl = $_POST["jlvl"];  // Job level of whitesmith
+$base = $GET_base;  // Base price of equipment
+$wlvl = $GET_wlvl;  // Weapon level 1-4, or armor
+$ori = $GET_ori;  // Market price of oridecon
+$jlvl = $GET_jlvl;  // Job level of whitesmith
 $eqrefine = 0;
 $fee = 0;
 $itemcost = 0;
@@ -123,15 +91,12 @@ if (!preg_match("/$isnumeric/", $base)) {
     exit();
 }
 
-$bonus = ($jlvl-50)/2;     // +% from job bonus
-$bonus = sprintf("%d", $bonus); // just get as integer
+$bonus = sprintf("%d", ($jlvl-50)/2);  // +% from job bonus
 if ($jlvl <= 50)
 	$bonus = 0;
 
-if ($wlvl == 0)
-    $bonus = 0;     // refining an armor
-    
-//print_table();
+if ($wlvl == 0)  // refining an armor
+    $bonus = 0;
 
 for ($i=5; $i<=10; $i++) {
     //print $percentrefinery[$wlvl][$i] . " += " . $bonus . "<br />";
@@ -144,26 +109,25 @@ for ($i=5; $i<=10; $i++) {
         $percentrefinery[$wlvl][$i] = 100;
 }
 
-//print "Applying bonuses $bonus";
 print_table();
 
 // +5 and above chances, [60, 60*40, 60*40*40, 60*40*40*20, 60*40*40*20*20, 60*40*40*20*20*10]
 $chances = array(0, 100, 100, 100, 100, $percentrefinery[$wlvl][5], 1, 1, 1, 1, 1);
 $denoms =  array(0, 1, 1, 1, 1, 100, pow(100, 2), pow(100, 3), pow(100, 4), pow(100, 5), pow(100, 6));
 
-// Calculate the chances of refining an equipment from +5 to +10
+// Calculate the chances of refining an equipment from +5 through +10
 foreach (range(6, 10) as $v) {
     $chances[$v] = $percentrefinery[$wlvl][$v] * $chances[$v-1];
 }
 
-printf("Base Price: %d Ori/Elu Price: %d Weapon Lvl: %d Job Lvl: %d <br />",
-	   $base, $ori, $wlvl, $jlvl);
+printf("Base Price: %s Ori/Elu Price: %s Weapon Lvl: %d Job Lvl: %d <br />",
+	   number_format($base), number_format($ori), $wlvl, $jlvl);
 
 print "<br />";
 print "<table border='1' cellpadding='2'>";
 print "<caption>Chance</caption>";
 print "<tr>".
-      "<td>Refine</td><td>x / y</td><td>Percent (%)</td><td>1 in x</td><td>Selling price (no fees)</td>".
+      "<td>Refine</td><td>Percent (%)</td><td>1 in x</td><td>Selling price (no fees)</td>".
 	  "<td># of Oridecons/Eluniums</td>".
 	  "<td>Total Cost = equipment cost + item cost + service fees</td>".
 	  "</tr>";
@@ -181,10 +145,9 @@ for ($i=5; $i<=10; $i++) {
 	$fee = $i * (($wlvl == 0) ? $service_fees[$wlvl] : 0) * $dchance;	// total service fee
 	$total = $selling + $itemcost + $fee;
     
-    print "<tr>".
-          "<td>+$i</td>".
-          "<td>$chances[$i] / $denoms[$i]</td>".    // x / y
-          "<td>". $per*100 ."%</td>".    //  ratio as a percentage
+    print "<tr>
+           <td>+$i</td>
+           <td>". $per*100 ."%</td>".    //  ratio as a percentage
           "<td>1 in $chance</td>".     // 1 out of x chances
           "<td>". number_format($selling) ."</td>".
 		  "<td>". $ori_num ."</td>".
@@ -214,15 +177,15 @@ function print_table()
         
     //print_r($percentrefinery);
         
-    print "<table border='1' cellpadding='2'>";
-    print "<caption>Refine Success Rates (%)</caption>";
-    print "<th>Equipment</th>";
+    print "<table border='1' cellpadding='2'>
+		   <caption>Refine Success Rates (%)</caption>
+		   <th>Equipment</th>";
     for ($i=1; $i<=10; $i++)
         print "<th>+$i</th>";
         
     for ($i=0; $i<=4; $i++) {
-        print "<tr>";
-        print "<td>". $names[$i] ."</td>";
+        print "<tr>
+			   <td>". $names[$i] ."</td>";
         for ($j=1; $j<=10; $j++) {
             print "<td>" . $percentrefinery[$i][$j] . "</td>";
         }
