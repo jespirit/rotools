@@ -19,6 +19,7 @@ $mainmenu[7] = array('Administration',			$CONFIG['cp_admin']);
 $submenu[] = array("Food",		'food.php',				1);
 $submenu[] = array("Alchemist",	'alchemist.php',		2);
 $submenu[] = array("Equipment",	'equip.php',			3);
+$submenu[] = array("Refine Simulator",	'refine.php',	3);
 
 $pos = 0;
 $menu = 'var mainmenu = new Array(';
