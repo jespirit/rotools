@@ -18,7 +18,7 @@ function toggleMenu(objID) {
 // wrap in parens for the function to be treated as an expression and not a declaration
 (function() {
 	$("#twilight-chk").css("display", "none");
-	$("#twilight").removeAttr("disabled");  // enable checkbox
+	$("#twilight").attr("disabled", true);  // disable checkbox
 	
 	$("[name='potion']").change(function() {
 		var x = $(this).val();
@@ -39,20 +39,75 @@ function toggleMenu(objID) {
 <form id="alchemist" name="alchemist" onsubmit="return GET_ajax('alchemist.php', 'alchemist_div', 'alchemist');">
 	<table>
 		<tr>
-			<td>Success Chance (%):</td>
-			<td><input type='text' name='per' /></td>
-			<td>Enter a percentage (0-100%)</td>
-		</tr>
+			<td>Job Level:</td>
+			<td><input type='text' name='jlvl'></td></tr>
+		<tr>
+			<td>DEX:</td>
+			<td><input type='text' name='dex'></td></tr>
+		<tr>
+			<td>INT:</td>
+			<td><input type='text' name='int'></td></tr>
+		<tr>
+			<td>LUK:</td>
+			<td><input type='text' name='luk'></td></tr>
+		<tr>
+			<td>Blessing:</td>
+			<td><input type='checkbox' name='blessing'></td></tr>
+		<tr>
+			<td>Gloria:</td>
+			<td><input type='checkbox' name='gloria'></td></tr>
+		<tr>
+			<td>Gospel:</td>
+			<td><input type='checkbox' name='gospel'></td></tr>
 EOF;
-			$types = array('Red, Yellow, White Potion', 'Blue Potion',
-						   'Condensed Red Potion', 'Condensed Yellow Potion', 'Condensed White Potion');
-						   
-			for ($i=0; $i<count($types); $i++) {
-				if ($i == 0)	// default selected value
-					print "<tr><td><input type='radio' name='potion' checked='checked' value='$i' />" . $types[$i] . "</td></tr>";
-				else
-					print "<tr><td><input type='radio' name='potion' value='$i' />" . $types[$i] . "</td></tr>";
-			}
+		print "
+				<tr>
+				<td>Learning Potion Skill</td>
+				<td>
+					<select name='lpot_lv'>";
+		for ($i=1; $i<=10; $i++) {
+			print "<option value='$i'>Lv $i</option>";
+		}
+		print "
+				</select>
+				</td>
+				</tr>";
+			   
+		print "
+				<tr>
+				<td>Pharmacy Skill</td>
+				<td>
+					<select name='pharm_lv'>";
+		for ($i=1; $i<=10; $i++) {
+			print "<option value='$i'>Lv $i</option>";
+		}
+		print "
+				</select>
+				</td>
+				</tr>";
+			   
+		print "
+				<tr>
+				<td>Homunculus Level</td>
+				<td>
+					<select name='hom_lv'>";
+		for ($i=1; $i<=99; $i++) {
+			print "<option value='$i'>Lv $i</option>";
+		}
+		print "
+				</select>
+				</td>
+				</tr>";
+		
+		$types = array('Red, Yellow, White Potion', 'Blue Potion',
+					   'Condensed Red Potion', 'Condensed Yellow Potion', 'Condensed White Potion');
+					   
+		for ($i=0; $i<count($types); $i++) {
+			if ($i == 0)	// default selected value
+				print "<tr><td><input type='radio' name='potion' checked='checked' value='$i' />" . $types[$i] . "</td></tr>";
+			else
+				print "<tr><td><input type='radio' name='potion' value='$i' />" . $types[$i] . "</td></tr>";
+		}
 			
 echo <<<EOF
 		<tr>
@@ -60,7 +115,7 @@ echo <<<EOF
 			<td><input type='text' name='qty' /></td>
 			<td>
 				<div id='twilight-chk'>
-					<input type='checkbox' name='twilight' id='twilight' value='1' disabled='disabled' />Twilight?
+					<input type='checkbox' name='twilight' id='twilight' value='1' />Twilight?
 				</div>
 			</td>
 		</tr>
@@ -75,7 +130,35 @@ EOF;
 exit();
 }
 
-$per = $GET_per;
+$jlvl = $GET_jlvl;
+$dex = $GET_dex;
+$int = $GET_int;
+$luk = $GET_luk;
+$lpot_lv = $GET_lpot_lv;
+$pharm_lv = $GET_pharm_lv;
+$hom_lv = $GET_hom_lv;
+
+$blessing = $GET_blessing;
+$gloria = $GET_gloria;
+$gospel = $GET_gospel;
+
+if ($blessing) {
+	$dex += 10;
+	$int += 10;
+}
+
+if ($gloria)
+	$luk += 30;
+
+if ($gospel) {
+	$dex += 20;
+	$int += 20;
+	$luk += 20;
+}
+	
+$per = $lpot_lv*50 + $pharm_lv*300 + $jlvl*20 + ($int/2)*10 + $dex*10 + $luk*10
+	+ (5 + 5*$hom_lv);
+
 $qty = $GET_qty;
 $potion = $GET_potion;
 $nherbs = 0;    // # of herbs
@@ -99,7 +182,7 @@ $is_numeric = "^[0-9]+$";
 
 // validate fields
 
-if (!preg_match("/$isdecimal/", $per) || $per > 100.00) {
+if (!preg_match("/$isdecimal/", $dex)) {
 	print "Error. ";
 	print "Success chance must be in format ###.## and in range 0.00-100.00<br />";
 	exit();
@@ -114,10 +197,6 @@ else if (!($qty <= $MAX_VALUE)) {
 	print "Integer overflow. Amount must be less than/equal to ". number_format($MAX_VALUE) ."<br />";
 	exit();
 }
-
-// remove decimal
-$per *= 100;
-$base_per = $per;
 
 $rates = array(
     // min, avg, max
@@ -146,7 +225,6 @@ else
 	$twilight = 1;
 
 for ($x=0; $x<$qty; $x++) {
-    $per = $base_per;  // Restore the base percent.
     
     // Apply bonuses or penalties.
     switch ($potion) {
