@@ -8,7 +8,7 @@ include_once 'functions.php';
 if (!isset($GET_frm_name)) {
 
 echo <<<EOF
-<h1>Refine Rate Simulator</h1>
+<h1>Refine Simulator</h1>
 <form id='refine_form' name='refine_form' onsubmit="return GET_ajax('refine.php', 'refine_div', 'refine_form');">
 	<table>
 		<tr><td>Equipment Name:</td><td><input type='text' name='eqname' /></td></tr>

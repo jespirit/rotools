@@ -8,7 +8,7 @@ include_once 'functions.php';
 if (!isset($GET_frm_name)) {
 
 print <<<EOF
-<h1>Equipment Refinery</h1>
+<h1>Equipment Calculator</h1>
 <form id='equip_form' name='equip_form' onsubmit="return GET_ajax('equip.php', 'equip_div', 'equip_form');">
 <table>
 	<tr>
