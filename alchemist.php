@@ -92,7 +92,7 @@ EOF;
 				<td>
 					<select name='hom_lv'>";
 		for ($i=1; $i<=99; $i++) {
-			print "<option value='$i'>Lv $i</option>";
+			print "<option value='$i'>$i</option>";
 		}
 		print "
 				</select>
@@ -142,23 +142,6 @@ $blessing = $GET_blessing;
 $gloria = $GET_gloria;
 $gospel = $GET_gospel;
 
-if ($blessing) {
-	$dex += 10;
-	$int += 10;
-}
-
-if ($gloria)
-	$luk += 30;
-
-if ($gospel) {
-	$dex += 20;
-	$int += 20;
-	$luk += 20;
-}
-	
-$per = $lpot_lv*50 + $pharm_lv*300 + $jlvl*20 + ($int/2)*10 + $dex*10 + $luk*10
-	+ (5 + 5*$hom_lv);
-
 $qty = $GET_qty;
 $potion = $GET_potion;
 $nherbs = 0;    // # of herbs
@@ -174,7 +157,7 @@ $pointrate = 0;
 $types = array('Red, Yellow, White Potion', 'Blue Potion', 
                'Condensed Red Potion', 'Condensed Yellow Potion', 'Condensed White Potion');
 
-$MAX_VALUE = 1000000;	// 1mil max
+DEFINE('MAX_VALUE', 1000000);	// 1mil max
 
 // 0-100 | 000.00-100.00
 $isdecimal = "^([0-9]{1,3}|[0-9]{1,3}\\.[0-9]{1,2})$";
@@ -182,21 +165,53 @@ $is_numeric = "^[0-9]+$";
 
 // validate fields
 
-if (!preg_match("/$isdecimal/", $dex)) {
-	print "Error. ";
-	print "Success chance must be in format ###.## and in range 0.00-100.00<br />";
+if (!preg_match("/$is_numeric/", $jlvl)) {
+	print "Error. Job Level must be an integer<br />";
+	exit();
+}
+else if ($jlvl > 70 || $jlvl < 1) {
+	print "Error. Job Level is invalid, must be in range 1-70.<br />";
+	exit();
+}
+else if (!preg_match("/$is_numeric/", $dex)) {
+	print "Error. DEX value must be an integer<br />";
+	exit();
+}
+else if (!preg_match("/$is_numeric/", $int)) {
+	print "Error. INT value must be an integer<br />";
+	exit();
+}
+else if (!preg_match("/$is_numeric/", $luk)) {
+	print "Error. LUK value must be an integer<br />";
 	exit();
 }
 else if ($qty == 0 || $qty < 0) {
-	print "Error. ";
-	print "Amount cannot be 0. And it must be greater than 0.<br />";
+	print "Error. Amount cannot be 0. And it must be greater than 0.<br />";
 	exit();
 }
-else if (!($qty <= $MAX_VALUE)) {
-	print "Error. ";
-	print "Integer overflow. Amount must be less than/equal to ". number_format($MAX_VALUE) ."<br />";
+else if ($qty > MAX_VALUE) {
+	print "Error. Integer overflow. Amount must be less than/equal to ". number_format($MAX_VALUE) ."<br />";
 	exit();
 }
+
+if ($blessing) {
+	$dex += 10;
+	$int += 10;
+}
+
+if ($gloria)
+	$luk += 30;
+
+if ($gospel) {
+	$dex += 20;
+	$int += 20;
+	$luk += 20;
+}
+
+// Calculate brewing success chance
+$per = $lpot_lv*50 + $pharm_lv*300 + $jlvl*20 + ($int/2)*10 + $dex*10 + $luk*10
+	+ (5 + 5*$hom_lv);
+$base_per = $per;
 
 $rates = array(
     // min, avg, max
@@ -206,6 +221,12 @@ $rates = array(
     array($per-500, $per-250, $per-10),  // Yellow slim
     array($per-1000, $per-500, $per-10),  // White slim
 );
+
+//$min, $avg, $max;
+
+$min = $rates[$potion][0]/100;
+$avg = $rates[$potion][1]/100;
+$max = $rates[$potion][2]/100;
 
 // Apply caps
 for ($i=0; $i<5; $i++) {
@@ -217,15 +238,13 @@ for ($i=0; $i<5; $i++) {
     }
 }
 
-if ($GET_twilight) {
-	// quantity now represents how many Twilight Alchemys to perform
-	$twilight = 200;
-}
+if ($GET_twilight)
+	$twilight = 200;  // quantity now represents how many Twilight Alchemys to perform
 else
 	$twilight = 1;
 
 for ($x=0; $x<$qty; $x++) {
-    
+    $per = $base_per;
     // Apply bonuses or penalties.
     switch ($potion) {
         case 0:  // Red, Yellow, White
@@ -247,7 +266,7 @@ for ($x=0; $x<$qty; $x++) {
 	// the percent chance for twilight alchemy is calculated once for each activation
     for ($i=0; $i<$twilight; $i++)
     {
-        if (rand(1, 10000) <= $per)
+        if (rand(0, 10000-1) < $per)
         { // Success
             $pots++;
             //Add fame as needed.
@@ -289,15 +308,15 @@ echo '
 	</tr>
 	<tr>
 		<td>Attempts</td>
-		<td>'. number_format($qty) / number_format($twilight) .'</td>
+		<td>'. number_format($qty*$twilight) .'</td>
+	</tr>
+	<tr>
+		<td>Success Rate (%)</td>
+		<td>'. sprintf("%.2f%% / %.2f%% / %.2f%%", $min, $avg, $max) .'</td>
 	</tr>
 	<tr>
 		<td>Fame Points</td>
 		<td>'. number_format($fame) .'</td>
-	</tr>
-	<tr>
-		<td>Success Rate (%)</td>
-		<td>'. sprintf("%.2f%% %.2f%% %.2f%%", $rates[$potion][0]/100, $rates[$potion][1]/100, $rates[$potion][2]/100) .'</td>
 	</tr>
 	<tr>
 		<td>Fame Points/Attempts</td>
