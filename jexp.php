@@ -1,4 +1,10 @@
 <?php
+
+session_start();
+include_once 'config.php'; // loads config variables
+include_once 'query.php'; // imports queries
+include_once 'functions.php';
+
 $jexp = array(
     array(  // novice
         array(1, 0, 10, 0),
@@ -263,14 +269,14 @@ $lvls = array(10, 10, 50, 50, 70, 70);
 
 $x = 0;
 
-$gain = 0.0;
-$lvl1 = $_POST["lvl1"];
-$lvl2 = $_POST["lvl2"];
-$exp1 = $_POST["exp1"];
-$exp2 = $_POST["exp2"];
-$rclass = $_POST["rclass"];
+$gain = 0;
+$lvl1 = $GET_lvl1;
+$lvl2 = $GET_lvl2;
+$exp1 = $GET_exp1;
+$exp2 = $GET_exp2;
+$rclass = $GET_rclass;
 
-$expgain = $_POST["expgain"];
+$expgain = $GET_expgain + 0;
 $lvl3 = 0;
 $exp3 = 0.0;
 
@@ -297,49 +303,45 @@ else if (!($exp2 >= 0.0 && $exp2 <= 100.0)) {
     print "Error <br />";
     print "End Exp must be in range 0-100 <br />";
 }
-else if (!($gain >= 0)) {
-    $valid = 0;
-    print "Error <br />";
-    print "Exp gain must be a positive integer <br />";
-}
-
 
 if (!$valid) {
-    print "ERROR! <br />";
+    exit();
 }
-else { 
-    // form data is valid
 
-    // calculate the amount of exp gained
-    // = exp2 - exp1 - (% at lvl1) + (% at lvl2)
-    $gain = ($jexp[$rclass][$lvl2-1][1] - $jexp[$rclass][$lvl1-1][1]) - ($jexp[$rclass][$lvl1-1][2] * $exp1/100) + ($jexp[$rclass][$lvl2-1][2] * $exp2/100);
+// form data is valid
 
-    $gain = sprintf("%d", $gain);   // get in integer format
-    
-    printf("(%d - %d) - %d + %d <br />", $jexp[$rclass][$lvl2-1][1], $jexp[$rclass][$lvl1-1][1], $jexp[$rclass][$lvl1-1][2] * $exp1/100, $jexp[$rclass][$lvl2-1][2] * $exp2/100);
-    print "You have gained " . number_format($gain) . " base experience. <br />";
+// calculate the amount of exp gained
+// = exp2 - exp1 - (% at lvl1) + (% at lvl2)
+$gain = ($jexp[$rclass][$lvl2-1][1] - $jexp[$rclass][$lvl1-1][1]) - ($jexp[$rclass][$lvl1-1][2] * $exp1/100) + ($jexp[$rclass][$lvl2-1][2] * $exp2/100);
 
-    // Calculate your level and % with 'expgain'
-    $texp = $jexp[$rclass][$lvl1-1][1] + ($jexp[$rclass][$lvl1-1][2] * $exp1/100) + $expgain;
-    print "Total exp amount: $texp <br />";
-    
-    $i = $lvls[$rclass];
-    for (; $i>0; $i--) {
-        if ($texp >= $jexp[$rclass][$i-1][1])
-            break;
-    }
-    
-    $lvl3 = $i;
-    
-    if ($i == $lvls[$rclass])
-        $exp3 = 100.0;
-    else
-        $exp3 = ($texp - $jexp[$rclass][$i-1][1]) * 100 / $jexp[$rclass][$i-1][2];    // get % at lvl3
-    
-    $exp3 = sprintf("%.1f", $exp3); // format to 3 decimal places
-    
-    print "From Level $lvl1 at $exp1%, with a gain of " . number_format($expgain) . " experience, " .
-          "You would be at Level $lvl3 with $exp3% <br />";
+$gain = sprintf("%d", $gain);  // get in integer format
+
+printf("(%s - %s) - %s + %s <br />", 
+	number_format($jexp[$rclass][$lvl2-1][1]), 
+	number_format($jexp[$rclass][$lvl1-1][1]), 
+	number_format($jexp[$rclass][$lvl1-1][2] * $exp1/100), 
+	number_format($jexp[$rclass][$lvl2-1][2] * $exp2/100));
+print "You have gained " . number_format($gain) . " job experience. <br />";
+
+// Calculate your level and % with 'expgain'
+$texp = sprintf("%d", $jexp[$rclass][$lvl1-1][1] + ($jexp[$rclass][$lvl1-1][2] * $exp1/100) + $expgain);
+print "Total exp amount: ". number_format($texp) ."<br />";
+
+for ($i=$lvls[$rclass]; $i>0; $i--) {
+	if ($texp >= $jexp[$rclass][$i-1][1])
+		break;
 }
+
+$lvl3 = $i;
+
+if ($i == $lvls[$rclass])
+	$exp3 = 100.0;
+else
+	$exp3 = ($texp - $jexp[$rclass][$i-1][1]) * 100 / $jexp[$rclass][$i-1][2];  // get % at lvl3
+
+$exp3 = sprintf("%.1f", $exp3);  // format to 3 decimal places
+
+print "From Level $lvl1 at $exp1%, with a gain of " . number_format($expgain) . " experience, " .
+	  "You would be at Level $lvl3 with $exp3% <br />";
 
 ?>
