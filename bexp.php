@@ -17,34 +17,35 @@ function read_exp()
 	}
 	
 	$maxlv;
-	$class_type;
+	$group;
 	$type;
 	$total_exp;
 
-	$types = array("fjob", "sjob");
+	$groups = array("fjob", "sjob");
 
 	while (!feof($fp)) {
 		$line = fgets($fp, 1024);
 		if (preg_match("/^\/\/|^\s*$/", $line))
 			continue;
+			
 		$data = explode(",", $line);
 		
 		//print "$line<br>";
 		//print "$data[0], $data[1], $data[2]<br>";
 		
 		$maxlv = $data[0];
-		$class_type = $data[1];
-		$type = $types[$data[2]];
+		$type = $data[2];
 		$total_exp = 0;
 		
 		if ($type == 0) {  // base exp
+			$group = $groups[$data[1]];
 			for ($i=0; $i<$maxlv-1; $i++) {
-				$exp[$type][$i][1] = $total_exp;
-				$exp[$type][$i][2] = $data[$i+3];
+				$exp[$group][$i][1] = $total_exp;
+				$exp[$group][$i][2] = $data[$i+3];
 				$total_exp += $data[$i+3];
 			}
-			$exp[$type][$maxlv-1][1] = $total_exp;
-			$exp[$type][$maxlv-1][2] = 0;
+			$exp[$group][$maxlv-1][1] = $total_exp;
+			$exp[$group][$maxlv-1][2] = 0;
 		}
 	}
 }
