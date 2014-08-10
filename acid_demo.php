@@ -1,135 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-
-<head>
-	<title>Acid Demonstration</title>
-	<link rel="stylesheet" type="text/css" href="/css/style.css" />
-	<style type="text/css">
-		table.txtr td { text-align: right; }
-		.mH { color:#60c; cursor:pointer;  font-weight:bold; border-top:1px solid #300; }
-		#stuff { display: none; }
-	</style>
-	<script language="javascript" type="text/javascript">
-	function toggleMenu(objID) {
-		if (!document.getElementById) return;
-		var ob = document.getElementById(objID).style;
-		ob.display = (ob.display == 'block')?'none':'block';
-	}
-	</script>
-</head>
-
-<body>
-<div id="wrapper">
-	<div id="header">
-		<h1>Ragnarok Tools</h1>
-	</div>
-	
-	<div id="left">
-		<div class="block">
-			<h2>Links</h2>
-			<ul>
-				<li><a href="/index.html">Home</a></li>
-				<li><a href="/exp.html">Base/Job Experience Calculator</a></li>
-				<li><a href="/php/alchemist.php">Alchemist Ranking</a></li>
-				<li><a href="/php/refine.php">Refine Simulator</a></li>
-				<li><a href="/php/equip.php">Equipment Calculator</a></li>
-				<li><a href="/php/whiteslim.php">White Slim Potion</a></li>
-				<li><a href="/php/acid_demo.php">Acid Demonstration</a></li>
-			</ul>
-		</div>
-	</div>
-
-	<div id="main">
-		<h1>Acid Demonstration Bottles</h1>
-		<form name='alchemy' method='post' action='acid_demo.php'>
-			<h2>Ingredients</h2>
-			<table border='1'>
-				<tr>
-					<td>Acid Demonstration Bottles:</td>
-					<td><input type='text' name='adnum' /></td>
-				</tr>
-				<tr>
-					<td>Success Chance (%):</td>
-					<td><input type='text' name='per' /></td>
-				</tr>
-				<tr>
-					<td>Immortal Heart</td>
-					<td><input type='text' name='iheart'></td>
-                <tr>
-					<td>AD Set:</td>
-					<td><input type='text' name='ad_set' /></td>
-				</tr>
-				<tr>
-					<td>Merchant Discount Level:</td>
-					<td>
-						<select name='discountlvl'>
-						<?php
-							foreach (range(0,10) as $n) {
-								if ($n == 10)
-									printf("<option value='%d' selected='selected'>%d</option>", $n, $n);
-								else
-									printf("<option value='%d'>%d</option>", $n, $n);
-							}
-						?>
-						</select>
-					</td>
-				</tr>
-					<td>
-						<div class="mH" onclick="toggleMenu('stuff')">+ Enter Amounts</div>
-						<table id="stuff">
-							<tr>
-								<td>Empty Bottle:</td>
-								<td><input type="text" name="n1" /></td>
-							</tr>
-							<tr>
-								<td>Alcohol:</td>
-								<td><input type="text" name="n2" /></td>
-							</tr>
-							<tr>
-								<td>Fabric:</td>
-								<td><input type="text" name="n3" /></td>
-							</tr>
-							<tr>
-								<td>Medicine Bowl:</td>
-								<td><input type="text" name="n4" /></td>
-							</tr>
-							
-							<tr>
-								<td>Immortal Heart:</td>
-								<td><input type="text" name="n5" /></td>
-							</tr>
-							<tr>
-								<td>Stem:</td>
-								<td><input type="text" name="n6" /></td>
-							</tr>
-							<tr>
-								<td>Empty Test Tube:</td>
-								<td><input type="text" name="n7" /></td>
-							</tr>
-							<tr>
-								<td>Poison Spore:</td>
-								<td><input type="text" name="n8" /></td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-			</table>
-
-			<input type='submit' name='submit' value='Submit' />
-		</form>
-	</div>
-
-	<div id="footer">
-		Custom Website 2012-2012
-	</div>
-</div>
-
-</body>
-</html>
-
 <?php
+
+session_start();
+include_once 'config.php'; // loads config variables
+include_once 'query.php'; // imports queries
+include_once 'functions.php';
+
+if (!isset($GET_frm_name)) {
+
+include('forms/ad-form.php');
+
+exit();
+}
 
 /*
 Creates 100 Alcohol, 50 Acid Bottle and 50 Bottle Grenade. 
@@ -156,34 +37,30 @@ Empty Test Tube x 1
 Poison Spore x 5
 + Medicine Bowl x 1
 */
-
-// check if submit button was clicked
-if (!isset($_POST["submit"]))
-	exit();
 		  
 $data = array(
 		  // [total # ingredients to purchase, # of ingredients per TA3, 
 		  //  name of ingredient, cost of ingredient, how many in possession]
-          array(1, 200, "Empty Bottle",     6,   $_POST["n1"]),
-		  array(0, 0,   "Alcohol",          0,   $_POST["n2"]),
-		  array(1, 50,  "Fabric",           306, $_POST["n3"]),
-		  array(1, 200, "Medicine Bowl",    8,   $_POST["n4"]),
+          array(1, 200, "Empty Bottle",     6,   $GET_n1),
+		  array(0, 0,   "Alcohol",          0,   $GET_n2),
+		  array(1, 50,  "Fabric",           306, $GET_n3),
+		  array(1, 200, "Medicine Bowl",    8,   $GET_n4),
 		  
-		  array(1, 50,  "Immortal Heart",   374, $_POST["n5"]),	// 4
+		  array(1, 50,  "Immortal Heart",   374, $GET_n5),	// 4
 		  
-		  array(1, 500, "Stem",             46,  $_POST["n6"]),	// 5
-		  array(1, 100, "Empty Test Tube",  3,   $_POST["n7"]),	// 6
-		  array(1, 500, "Poison Spore",     114, $_POST["n8"]),	// 7
+		  array(1, 500, "Stem",             46,  $GET_n6),	// 5
+		  array(1, 100, "Empty Test Tube",  3,   $GET_n7),	// 6
+		  array(1, 500, "Poison Spore",     114, $GET_n8),	// 7
 		);
 		
-$adnum = $_POST["adnum"];
-$per = $_POST["per"];
-$ad_set = $_POST["ad_set"] ? $_POST["ad_set"] : 0;  // default to zero
-$iheart = $_POST["iheart"];
+$adnum = $GET_ad_num;
+$per = $GET_per;
+$ad_set = $GET_ad_set ? $GET_ad_set : 0;  // default to zero
+$iheart = $GET_iheart;
 $isnumeric = "^[0-9]+$";
 $isdecimal = "^([0-9]{1,3}|[0-9]{1,3}.[0-9]{1,2})$";  // 0-100, 000.00-100.00
 
-$skilllvl = $_POST["discountlvl"];
+$skilllvl = $GET_discountlvl;
 $discount = array(0, 7, 9, 11, 13, 15, 17, 19, 21, 23, 24);
 
 // cost of ingredients for alcohol
