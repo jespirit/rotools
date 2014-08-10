@@ -36,7 +36,7 @@ echo <<<EOF
 		<td><input type="radio" name="roclass" value="sjob" />Second</td>
 	</tr>
 	<tr>
-		<td>Start Level:</td>
+		<td>Start Base Level:</td>
 		<td><input type="text" name="lvl1" /></td>
 		
 		<td>Start Exp:</td>
@@ -46,7 +46,7 @@ echo <<<EOF
 		<td><input type="text" name="expgain" /></td>
 	</tr>
 	<tr>
-		<td>End Level:</td>
+		<td>End Base Level:</td>
 		<td><input type="text" name="lvl2"/> </td>
 		
 		<td>End Exp:</td>
@@ -64,22 +64,25 @@ echo <<<EOF
 <form id="jexp_form" name="jexp_form" onsubmit="return GET_ajax('jexp.php', 'jexp_div', 'jexp_form');">
 <table border='0' cellspacing='2' id="choose-class">
 	<tr>
-		<td><input type='radio' name='rclass' value='0' checked='checked' /> Novice</td>
-		<td><input type='radio' name='rclass' value='1' /> Transcendent Novice</td>
+		<td><input type='radio' name='roclass' value='0' checked='checked'></td><td>Novice</td>
+		<td><input type='radio' name='roclass' value='1'></td><td>First Class</td>
+		<td><input type='radio' name='roclass' value='2'></td><td>Second Class</td>
 	</tr>
 	<tr>
-		<td><input type='radio' name='rclass' value='2' /> First Class</td>
-		<td><input type='radio' name='rclass' value='3' /> Second Class</td>
+		<td><input type='radio' name='roclass' value='4'></td><td>Novice High</td>
+		<td><input type='radio' name='roclass' value='5'></td><td>Transcendent First Class</td>
+		<td><input type='radio' name='roclass' value='6'></td><td>Transcendent Second Class</td>
 	</tr>
 	<tr>
-		<td><input type='radio' name='rclass' value='4' /> Transcendent First Class</td>
-		<td><input type='radio' name='rclass' value='5' /> Transcendent Second Class</td>
+		<td><input type='radio' name='roclass' value='3'></td><td>Super Novice</td>
+		<td><input type='radio' name='roclass' value='7'></td><td>Star Gladiator</td>
+		<td><input type='radio' name='roclass' value='8'></td><td>Ninja/Gunslinger</td>
 	</tr>
 </table>
 
 <table border='0' cellspacing='2'>
 	<tr>
-		<td>Start Level:</td>
+		<td>Start Job Level:</td>
 		<td><input type="text" name="lvl1" /></td>
 		
 		<td>Start Exp:</td>
@@ -89,7 +92,7 @@ echo <<<EOF
 		<td><input type="text" name="expgain" /></td>
 	</tr>
 	<tr>
-		<td>End Level:</td>
+		<td>End Job Level:</td>
 		<td><input type="text" name="lvl2"/> </td>
 		
 		<td>End Exp:</td>
