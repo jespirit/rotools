@@ -8,24 +8,6 @@ include_once 'functions.php';
 if (!isset($GET_frm_name)) {
 
 echo <<<EOF
-<script>
-(function() {
-	$("head").append('
-		<style type="text/css">
-			#choose-class td { float:none; }
-			#main h2 
-			{ 	
-				/*font-size: 12px;
-				font-weight: normal;*/
-				color: #fff;
-				margin: 0;
-				padding: 10px 0 5px 10px;
-				background-color: #fc672a;
-			}
-		</style>'
-	);
-}());
-</script>
 
 <h2>Base Exp Calculator</h2>
 <form id="bexp_form" name="bexp_form" onsubmit="return GET_ajax('bexp.php', 'bexp_div', 'bexp_form');">
