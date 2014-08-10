@@ -12,7 +12,7 @@ body {
 	width: 900px;
 	height: 180px;
 	background-image: url(images/testro.jpg);
-	background-repeat: none;
+	background-repeat: no-repeat;
 	margin: 0 auto;
 }
 
@@ -280,6 +280,6 @@ table.item td {
 
 table.item td.attribute {
 	color: #000;
-	font-weight; bold;
+	font-weight: bold;
 	background-color: #f7f7f7;
 }

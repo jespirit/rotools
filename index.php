@@ -32,7 +32,7 @@ include_once 'functions.php';
 	<div id="menu_load" style="position:absolute; top:0px; left:0px; visibility:hidden;"></div>
 	
 	<!--  Loading Image -->
-	<div id="load_div" style="position:absolute; top:161px; left:790px; height:30px width:25px; visibility:hidden; background-color:#000000; color:#FFFFFF"><img src="images/loading.gif" alt="Loading..."></div>
+	<div id="load_div" style="position:absolute; top:161px; left:790px; height:30px; width:25px; visibility:hidden; background-color:#000000; color:#FFFFFF"><img src="images/loading.gif" alt="Loading..."></div>
 	
 	<!--  Sub Menu -->
 	<div id="sub_menu"></div>
