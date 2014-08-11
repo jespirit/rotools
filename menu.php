@@ -10,16 +10,14 @@ $mainmenu[0] = array("HOME",					-1);
 $mainmenu[1] = array("FOOD",	 				 0);
 $mainmenu[2] = array("ALCHEMIST",				 0);
 $mainmenu[3] = array("EQUIPMENT",				 0);
-$mainmenu[4] = array($lang['MENU_INFORMATION'],	-1);
-$mainmenu[5] = array($lang['MENU_PROBLEMS'],	 0);
-$mainmenu[6] = array('Logs',					$CONFIG['cp_admin']);
-$mainmenu[7] = array('Administration',			$CONFIG['cp_admin']);
+$mainmenu[4] = array("EXPERIENCE",				 0);
 
 // Page name, page link, category id
-$submenu[] = array("Food",		'food.php',				1);
-$submenu[] = array("Alchemist",	'alchemist.php',		2);
-$submenu[] = array("Equipment",	'equip.php',			3);
-$submenu[] = array("Refine Simulator",	'refine.php',	3);
+$submenu[] = array("Food",				'food.php',				1);
+$submenu[] = array("Alchemist",			'alchemist.php',		2);
+$submenu[] = array("Equipment",			'equip.php',			3);
+$submenu[] = array("Refine Simulator",	'refine.php',			3);
+$submenu[] = array("Experience",		'exp.php',				4);
 
 $pos = 0;
 $menu = 'var mainmenu = new Array(';

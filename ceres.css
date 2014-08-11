@@ -283,3 +283,7 @@ table.item td.attribute {
 	font-weight: bold;
 	background-color: #f7f7f7;
 }
+
+table.txtr td { text-align: right; }
+.mH { color:#60c; cursor:pointer;  font-weight:bold; border-top:1px solid #300; }
+#in-stock { display: none; }

@@ -1,345 +1,160 @@
 <?php
-$jexp = array(
-    array(  // novice
-        array(1, 0, 10, 0),
-        array(2, 10, 18, 80.0),
-        array(3, 28, 28, 55.6),
-        array(4, 56, 40, 42.9),
-        array(5, 96, 91, 127.5),
-        array(6, 187, 151, 65.9),
-        array(7, 338, 205, 35.8),
-        array(8, 543, 268, 30.7),
-        array(9, 811, 340, 26.9),
-        array(10, 1151, 0, 0),
-    ),
-    
-    array(  // trans novice
-        array(1, 0, 11, 0),
-        array(2, 11, 20, 81.8),
-        array(3, 31, 31, 55.0),
-        array(4, 62, 44, 41.9),
-        array(5, 106, 100, 127.3),
-        array(6, 206, 166, 66.0),
-        array(7, 372, 226, 36.1),
-        array(8, 598, 295, 30.5),
-        array(9, 893, 374, 26.8),
-        array(10, 1267, 0, 0),
-    ),
-    
-    array(  // first class
-        array(1, 0, 30, 0),
-        array(2, 30, 43, 43.3),
-        array(3, 73, 58, 34.9),
-        array(4, 131, 76, 31.0),
-        array(5, 207, 116, 52.6),
-        array(6, 323, 180, 55.2),
-        array(7, 503, 220, 22.2),
-        array(8, 723, 272, 23.6),
-        array(9, 995, 336, 23.5),
-        array(10, 1331, 520, 54.8),
-        array(11, 1851, 604, 16.2),
-        array(12, 2455, 699, 15.7),
-        array(13, 3154, 802, 14.7),
-        array(14, 3956, 948, 18.2),
-        array(15, 4904, 1125, 18.7),
-        array(16, 6029, 1668, 48.3),
-        array(17, 7697, 1937, 16.1),
-        array(18, 9634, 2226, 14.9),
-        array(19, 11860, 3040, 36.6),
-        array(20, 14900, 3988, 31.2),
-        array(21, 18888, 5564, 39.5),
-        array(22, 24452, 6272, 12.7),
-        array(23, 30724, 7021, 11.9),
-        array(24, 37745, 9114, 29.8),
-        array(25, 46859, 11473, 25.9),
-        array(26, 58332, 15290, 33.3),
-        array(27, 73622, 16891, 10.5),
-        array(28, 90513, 18570, 9.9),
-        array(29, 109083, 23229, 25.1),
-        array(30, 132312, 28359, 22.1),
-        array(31, 160671, 36478, 28.6),
-        array(32, 197149, 39716, 8.9),
-        array(33, 236865, 43088, 8.5),
-        array(34, 279953, 52417, 21.7),
-        array(35, 332370, 62495, 19.2),
-        array(36, 394865, 78160, 25.1),
-        array(37, 473025, 84175, 7.7),
-        array(38, 557200, 90404, 7.4),
-        array(39, 647604, 107611, 19.0),
-        array(40, 755215, 125915, 17.0),
-        array(41, 881130, 153941, 22.3),
-        array(42, 1035071, 191781, 24.6),
-        array(43, 1226852, 204351, 6.6),
-        array(44, 1431203, 248352, 21.5),
-        array(45, 1679555, 286212, 15.2),
-        array(46, 1965767, 386371, 35.0),
-        array(47, 2352138, 409795, 6.1),
-        array(48, 2761933, 482092, 17.6),
-        array(49, 3244025, 509596, 5.7),
-        array(50, 3753621, 0, 0),
-    ),
-    
-    array(  // second class
-        array(1, 0, 144, 0),
-        array(2, 144, 184, 27.8),
-        array(3, 328, 284, 54.3),
-        array(4, 612, 348, 22.5),
-        array(5, 960, 603, 73.3),
-        array(6, 1563, 887, 47.1),
-        array(7, 2450, 1096, 23.6),
-        array(8, 3546, 1598, 45.8),
-        array(9, 5144, 2540, 58.9),
-        array(10, 7684, 3676, 44.7),
-        array(11, 11360, 4290, 16.7),
-        array(12, 15650, 4946, 15.3),
-        array(13, 20596, 6679, 35.0),
-        array(14, 27275, 9492, 42.1),
-        array(15, 36767, 12770, 34.5),
-        array(16, 49537, 14344, 12.3),
-        array(17, 63881, 16005, 11.6),
-        array(18, 79886, 20642, 29.0),
-        array(19, 100528, 27434, 32.9),
-        array(20, 127962, 35108, 28.0),
-        array(21, 163070, 38577, 9.9),
-        array(22, 201647, 42206, 9.4),
-        array(23, 243853, 52708, 24.9),
-        array(24, 296561, 66971, 27.1),
-        array(25, 363532, 82688, 23.5),
-        array(26, 446220, 89544, 8.3),
-        array(27, 535764, 96669, 8.0),
-        array(28, 632433, 117821, 21.9),
-        array(29, 750254, 144921, 23.0),
-        array(30, 895175, 174201, 20.2),
-        array(31, 1069376, 186677, 7.2),
-        array(32, 1256053, 199584, 6.9),
-        array(33, 1455637, 238617, 19.6),
-        array(34, 1694254, 286366, 20.0),
-        array(35, 1980620, 337147, 17.7),
-        array(36, 2317767, 358435, 6.3),
-        array(37, 2676202, 380376, 6.1),
-        array(38, 3056578, 447685, 17.7),
-        array(39, 3504263, 526989, 17.7),
-        array(40, 4031252, 610246, 15.8),
-        array(41, 4641498, 644736, 5.7),
-        array(42, 5286234, 793535, 23.1),
-        array(43, 6079769, 921810, 16.2),
-        array(44, 7001579, 1106758, 20.1),
-        array(45, 8108337, 1260955, 13.9),
-        array(46, 9369292, 1487304, 18.0),
-        array(47, 10856596, 1557657, 4.7),
-        array(48, 12414253, 1990632, 27.8),
-        array(49, 14404885, 2083386, 4.7),
-        array(50, 16488271, 0, 0),
-    ),
-    
-    array(  // trans first class
-        array(1, 0, 60, 0),
-        array(2, 60, 86, 43.3),
-        array(3, 146, 116, 34.9),
-        array(4, 262, 152, 31.0),
-        array(5, 414, 232, 52.6),
-        array(6, 646, 360, 55.2),
-        array(7, 1006, 440, 22.2),
-        array(8, 1446, 544, 23.6),
-        array(9, 1990, 672, 23.5),
-        array(10, 2662, 1040, 54.8),
-        array(11, 3702, 1208, 16.2),
-        array(12, 4910, 1398, 15.7),
-        array(13, 6308, 1604, 14.7),
-        array(14, 7912, 1896, 18.2),
-        array(15, 9808, 2250, 18.7),
-        array(16, 12058, 3336, 48.3),
-        array(17, 15394, 3874, 16.1),
-        array(18, 19268, 4452, 14.9),
-        array(19, 23720, 6080, 36.6),
-        array(20, 29800, 7976, 31.2),
-        array(21, 37776, 11128, 39.5),
-        array(22, 48904, 12544, 12.7),
-        array(23, 61448, 14042, 11.9),
-        array(24, 75490, 18228, 29.8),
-        array(25, 93718, 28683, 57.4),
-        array(26, 122401, 38225, 33.3),
-        array(27, 160626, 42228, 10.5),
-        array(28, 202854, 46425, 9.9),
-        array(29, 249279, 58073, 25.1),
-        array(30, 307352, 70898, 22.1),
-        array(31, 378250, 91195, 28.6),
-        array(32, 469445, 99290, 8.9),
-        array(33, 568735, 107720, 8.5),
-        array(34, 676455, 131043, 21.7),
-        array(35, 807498, 156238, 19.2),
-        array(36, 963736, 195408, 25.1),
-        array(37, 1159144, 210430, 7.7),
-        array(38, 1369574, 226010, 7.4),
-        array(39, 1595584, 269028, 19.0),
-        array(40, 1864612, 314788, 17.0),
-        array(41, 2179400, 384853, 22.3),
-        array(42, 2564253, 479453, 24.6),
-        array(43, 3043706, 510878, 6.6),
-        array(44, 3554584, 620880, 21.5),
-        array(45, 4175464, 715530, 15.2),
-        array(46, 4890994, 965928, 35.0),
-        array(47, 5856922, 1024488, 6.1),
-        array(48, 6881410, 1205230, 17.6),
-        array(49, 8086640, 1273990, 5.7),
-        array(50, 9360630, 0, 0),
-    ),
-    
-    array(  // trans second class
-        array(1, 0, 288, 0),
-        array(2, 288, 368, 27.8),
-        array(3, 656, 568, 54.3),
-        array(4, 1224, 696, 22.5),
-        array(5, 1920, 1206, 73.3),
-        array(6, 3126, 1774, 47.1),
-        array(7, 4900, 2192, 23.6),
-        array(8, 7092, 3196, 45.8),
-        array(9, 10288, 5080, 58.9),
-        array(10, 15368, 7352, 44.7),
-        array(11, 22720, 8580, 16.7),
-        array(12, 31300, 9892, 15.3),
-        array(13, 41192, 13358, 35.0),
-        array(14, 54550, 18984, 42.1),
-        array(15, 73534, 31925, 68.2),
-        array(16, 105459, 35860, 12.3),
-        array(17, 141319, 40013, 11.6),
-        array(18, 181332, 51605, 29.0),
-        array(19, 232937, 68585, 32.9),
-        array(20, 301522, 87770, 28.0),
-        array(21, 389292, 96443, 9.9),
-        array(22, 485735, 105515, 9.4),
-        array(23, 591250, 131770, 24.9),
-        array(24, 723020, 167428, 27.1),
-        array(25, 890448, 206720, 23.5),
-        array(26, 1097168, 223860, 8.3),
-        array(27, 1321028, 241673, 8.0),
-        array(28, 1562701, 294553, 21.9),
-        array(29, 1857254, 362303, 23.0),
-        array(30, 2219557, 479053, 32.2),
-        array(31, 2698610, 513362, 7.2),
-        array(32, 3211972, 548856, 6.9),
-        array(33, 3760828, 656197, 19.6),
-        array(34, 4417025, 787507, 20.0),
-        array(35, 5204532, 927154, 17.7),
-        array(36, 6131686, 985696, 6.3),
-        array(37, 7117382, 1046034, 6.1),
-        array(38, 8163416, 1231134, 17.7),
-        array(39, 9394550, 1449220, 17.7),
-        array(40, 10843770, 1678177, 15.8),
-        array(41, 12521947, 1773024, 5.7),
-        array(42, 14294971, 2182221, 23.1),
-        array(43, 16477192, 2534978, 16.2),
-        array(44, 19012170, 3043585, 20.1),
-        array(45, 22055755, 3782865, 24.3),
-        array(46, 25838620, 4461912, 18.0),
-        array(47, 30300532, 4672971, 4.7),
-        array(48, 34973503, 5971896, 27.8),
-        array(49, 40945399, 6250158, 4.7),
-        array(50, 47195557, 6875174, 10.0),
-        array(51, 54070731, 7562691, 10.0),
-        array(52, 61633422, 8318960, 10.0),
-        array(53, 69952382, 9150856, 10.0),
-        array(54, 79103238, 10065942, 10.0),
-        array(55, 89169180, 11877812, 18.0),
-        array(56, 101046992, 14015818, 18.0),
-        array(57, 115062810, 16538655, 18.0),
-        array(58, 131601465, 19515624, 18.0),
-        array(59, 151117089, 23028437, 18.0),
-        array(60, 174145526, 28094693, 22.0),
-        array(61, 202240219, 34275525, 22.0),
-        array(62, 236515744, 41816141, 22.0),
-        array(63, 278331885, 51015692, 22.0),
-        array(64, 329347577, 62239144, 22.0),
-        array(65, 391586721, 79666104, 28.0),
-        array(66, 471252825, 101972614, 28.0),
-        array(67, 573225439, 130524946, 28.0),
-        array(68, 703750385, 167071930, 28.0),
-        array(69, 870822315, 213852071, 28.0),
-        array(70, 1084674386, 0, 0),
-    ),
-);
 
-$lvls = array(10, 10, 50, 50, 70, 70);
+session_start();
+include_once 'config.php'; // loads config variables
+include_once 'query.php'; // imports queries
+include_once 'functions.php';
+
+function read_exp()
+{
+	global $jexp;
+	global $lvls;
+	
+	$file = "exp.txt";
+	$fp = fopen($file, "r");
+	if (!$fp) {
+		print "Error. Failed to open file $file.<br>";
+		exit();
+	}
+	
+	$maxlv;
+	$group;
+	$type;
+	$total_exp;
+
+	while (!feof($fp)) {
+		$line = fgets($fp, 1024);
+		if (preg_match("/^\/\/|^\s*$/", $line))
+			continue;
+		$data = explode(",", $line);
+		
+		//print "$line<br>";
+		//print "$data[0], $data[1], $data[2]<br>";
+		
+		$maxlv = $data[0];  // max job level
+		$group = $data[1];
+		$type = $data[2];
+		$total_exp = 0;
+		
+		if ($type == 1) {  // job exp
+			$lvls[$group] = $maxlv;
+			for ($i=0; $i<$maxlv-1; $i++) {
+				$jexp[$group][$i][1] = $total_exp;
+				$jexp[$group][$i][2] = $data[$i+3];
+				$total_exp += $data[$i+3];
+			}
+			$jexp[$group][$maxlv-1][1] = $total_exp;
+			$jexp[$group][$maxlv-1][2] = 0;
+		}
+	}
+}
+
+read_exp();
+
+//$lvls = array(10, 10, 50, 50, 70, 70);
 
 $x = 0;
 
-$gain = 0.0;
-$lvl1 = $_POST["lvl1"];
-$lvl2 = $_POST["lvl2"];
-$exp1 = $_POST["exp1"];
-$exp2 = $_POST["exp2"];
-$rclass = $_POST["rclass"];
+// 0-100 | 000.00-100.00
+$short_decimal = "/^([0-9]{1,3}|[0-9]{1,3}\\.[0-9]{1})$/";
+$is_numeric = "/^[0-9]+$/";
 
-$expgain = $_POST["expgain"];
+$gain = 0;
+$lvl1 = $GET_lvl1 + 0;
+$lvl2 = $GET_lvl2 + 0;
+$exp1 = $GET_exp1 * 1;
+$exp2 = $GET_exp2 * 1;
+$roclass = $GET_roclass;
+
+$expgain = $GET_expgain + 0;
 $lvl3 = 0;
 $exp3 = 0.0;
 
 $valid = 1;
 
 // validate form fields
-if (!($lvl1 >= 1 && $lvl1 <= $lvls[$rclass])) {
-    $valid = 0;
-    print "Error <br />";
-    print "Start Level must be in range 1-". $lvls[$rclass] ."<br />";
+if (!preg_match("$is_numeric", $lvl1)) {
+	print "Error. Start Job Level must be a positive integer.<br>";
+	$valid = 0;
 }
-else if (!($lvl2 >= 1 && $lvl2 <= $lvls[$rclass] && $lvl2 >= $lvl1)) {
+else if (!($lvl1 >= 1 && $lvl1 <= $lvls[$roclass])) {
     $valid = 0;
     print "Error <br />";
-    print "End Level must be in range 1-". $lvls[$rclass] ." AND equal or greater than Start Level <br />";
+    print "Start Job Level must be in range 1-". $lvls[$roclass] ."<br />";
+}
+else if (!preg_match("$is_numeric", $lvl2)) {
+	print "Error. End Job Level must be a positive integer.<br>";
+	$valid = 0;
+}
+else if (!($lvl2 >= 1 && $lvl2 <= $lvls[$roclass])) {
+    $valid = 0;
+    print "Error <br />";
+    print "End Job Level must be in range 1-". $lvls[$roclass] ."<br>";
+}
+else if ($lvl2 < $lvl1) {
+	print "Error. End Job Level must be greater than or equal to Start Job Level<br>";
+	$valid = 0;
+}
+else if (!preg_match($short_decimal, $exp1)) {
+	print "Error. Start Exp must be a decimal in the form of XX.X";
+	$valid = 0;
 }
 else if (!($exp1 >= 0.0 && $exp1 <= 100.0)) {
     $valid = 0;
     print "Error <br />";
     print "Start Exp must be in range 0-100 <br />";
 }
+else if (!preg_match($short_decimal, $exp2)) {
+	print "Error. Start Exp must be a decimal in the form of XX.X";
+	$valid = 0;
+}
 else if (!($exp2 >= 0.0 && $exp2 <= 100.0)) {
     $valid = 0;
     print "Error <br />";
     print "End Exp must be in range 0-100 <br />";
 }
-else if (!($gain >= 0)) {
-    $valid = 0;
-    print "Error <br />";
-    print "Exp gain must be a positive integer <br />";
-}
-
 
 if (!$valid) {
-    print "ERROR! <br />";
+    exit();
 }
-else { 
-    // form data is valid
 
-    // calculate the amount of exp gained
-    // = exp2 - exp1 - (% at lvl1) + (% at lvl2)
-    $gain = ($jexp[$rclass][$lvl2-1][1] - $jexp[$rclass][$lvl1-1][1]) - ($jexp[$rclass][$lvl1-1][2] * $exp1/100) + ($jexp[$rclass][$lvl2-1][2] * $exp2/100);
+// form data is valid
 
-    $gain = sprintf("%d", $gain);   // get in integer format
-    
-    printf("(%d - %d) - %d + %d <br />", $jexp[$rclass][$lvl2-1][1], $jexp[$rclass][$lvl1-1][1], $jexp[$rclass][$lvl1-1][2] * $exp1/100, $jexp[$rclass][$lvl2-1][2] * $exp2/100);
-    print "You have gained " . number_format($gain) . " base experience. <br />";
+// calculate the amount of exp gained
+// = exp2 - exp1 - (% at lvl1) + (% at lvl2)
+$gain = ($jexp[$roclass][$lvl2-1][1] - $jexp[$roclass][$lvl1-1][1])
+	- ($jexp[$roclass][$lvl1-1][2] * $exp1/100)
+	+ ($jexp[$roclass][$lvl2-1][2] * $exp2/100);
 
-    // Calculate your level and % with 'expgain'
-    $texp = $jexp[$rclass][$lvl1-1][1] + ($jexp[$rclass][$lvl1-1][2] * $exp1/100) + $expgain;
-    print "Total exp amount: $texp <br />";
-    
-    $i = $lvls[$rclass];
-    for (; $i>0; $i--) {
-        if ($texp >= $jexp[$rclass][$i-1][1])
-            break;
-    }
-    
-    $lvl3 = $i;
-    
-    if ($i == $lvls[$rclass])
-        $exp3 = 100.0;
-    else
-        $exp3 = ($texp - $jexp[$rclass][$i-1][1]) * 100 / $jexp[$rclass][$i-1][2];    // get % at lvl3
-    
-    $exp3 = sprintf("%.1f", $exp3); // format to 3 decimal places
-    
-    print "From Level $lvl1 at $exp1%, with a gain of " . number_format($expgain) . " experience, " .
-          "You would be at Level $lvl3 with $exp3% <br />";
+$gain = sprintf("%d", $gain);  // get in integer format
+
+printf("(%s - %s) - %s + %s <br />", 
+	number_format($jexp[$roclass][$lvl2-1][1]),
+	number_format($jexp[$roclass][$lvl1-1][1]),
+	number_format($jexp[$roclass][$lvl1-1][2] * $exp1/100),
+	number_format($jexp[$roclass][$lvl2-1][2] * $exp2/100));
+print "You have gained " . number_format($gain) . " job experience. <br />";
+
+// Calculate your level and % with 'expgain'
+$texp = sprintf("%d", $jexp[$roclass][$lvl1-1][1]
+	+ ($jexp[$roclass][$lvl1-1][2] * $exp1/100) + $expgain);
+print "Total exp amount: ". number_format($texp) ."<br />";
+
+for ($i=$lvls[$roclass]; $i>0; $i--) {
+	if ($texp >= $jexp[$roclass][$i-1][1])
+		break;
 }
+
+$lvl3 = $i;
+
+if ($i == $lvls[$roclass])
+	$exp3 = 100.0;
+else
+	$exp3 = ($texp - $jexp[$roclass][$i-1][1]) * 100 / $jexp[$roclass][$i-1][2];  // get % at lvl3
+
+$exp3 = sprintf("%.1f", $exp3);  // format to 3 decimal places
+
+print "From Level $lvl1 at $exp1%, with a gain of " . number_format($expgain) . " experience, " .
+	  "You would be at Level $lvl3 with $exp3% <br />";
 
 ?>
