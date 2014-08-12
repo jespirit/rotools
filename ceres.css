@@ -284,6 +284,10 @@ table.item td.attribute {
 	background-color: #f7f7f7;
 }
 
-table.txtr td { text-align: right; }
+.clear { float: clear; }
+form#acid_demo { float: left; }
+ul.ingredients { list-style-type: none; }
+table.acid { border: 1px solid; }
+table.acid td { border: 1px solid; border-style: inset; text-align: right; }
 .mH { color:#60c; cursor:pointer;  font-weight:bold; border-top:1px solid #300; }
 #in-stock { display: none; }
