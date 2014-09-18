@@ -14,7 +14,8 @@ $mainmenu[4] = array("EXPERIENCE",				 0);
 
 // Page name, page link, category id
 $submenu[] = array("Food",				'food.php',				1);
-$submenu[] = array("Alchemist",			'alchemist.php',		2);
+$submenu[] = array("Acid Demo",			'acid_demo.php',		2);
+$submenu[] = array("Ranking",			'alchemist.php',		2);
 $submenu[] = array("Equipment",			'equip.php',			3);
 $submenu[] = array("Refine Simulator",	'refine.php',			3);
 $submenu[] = array("Experience",		'exp.php',				4);

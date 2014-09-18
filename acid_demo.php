@@ -1,135 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-
-<head>
-	<title>Acid Demonstration</title>
-	<link rel="stylesheet" type="text/css" href="/css/style.css" />
-	<style type="text/css">
-		table.txtr td { text-align: right; }
-		.mH { color:#60c; cursor:pointer;  font-weight:bold; border-top:1px solid #300; }
-		#stuff { display: none; }
-	</style>
-	<script language="javascript" type="text/javascript">
-	function toggleMenu(objID) {
-		if (!document.getElementById) return;
-		var ob = document.getElementById(objID).style;
-		ob.display = (ob.display == 'block')?'none':'block';
-	}
-	</script>
-</head>
-
-<body>
-<div id="wrapper">
-	<div id="header">
-		<h1>Ragnarok Tools</h1>
-	</div>
-	
-	<div id="left">
-		<div class="block">
-			<h2>Links</h2>
-			<ul>
-				<li><a href="/index.html">Home</a></li>
-				<li><a href="/exp.html">Base/Job Experience Calculator</a></li>
-				<li><a href="/php/alchemist.php">Alchemist Ranking</a></li>
-				<li><a href="/php/refine.php">Refine Simulator</a></li>
-				<li><a href="/php/equip.php">Equipment Calculator</a></li>
-				<li><a href="/php/whiteslim.php">White Slim Potion</a></li>
-				<li><a href="/php/acid_demo.php">Acid Demonstration</a></li>
-			</ul>
-		</div>
-	</div>
-
-	<div id="main">
-		<h1>Acid Demonstration Bottles</h1>
-		<form name='alchemy' method='post' action='acid_demo.php'>
-			<h2>Ingredients</h2>
-			<table border='1'>
-				<tr>
-					<td>Acid Demonstration Bottles:</td>
-					<td><input type='text' name='adnum' /></td>
-				</tr>
-				<tr>
-					<td>Success Chance (%):</td>
-					<td><input type='text' name='per' /></td>
-				</tr>
-				<tr>
-					<td>Immortal Heart</td>
-					<td><input type='text' name='iheart'></td>
-                <tr>
-					<td>AD Set:</td>
-					<td><input type='text' name='ad_set' /></td>
-				</tr>
-				<tr>
-					<td>Merchant Discount Level:</td>
-					<td>
-						<select name='discountlvl'>
-						<?php
-							foreach (range(0,10) as $n) {
-								if ($n == 10)
-									printf("<option value='%d' selected='selected'>%d</option>", $n, $n);
-								else
-									printf("<option value='%d'>%d</option>", $n, $n);
-							}
-						?>
-						</select>
-					</td>
-				</tr>
-					<td>
-						<div class="mH" onclick="toggleMenu('stuff')">+ Enter Amounts</div>
-						<table id="stuff">
-							<tr>
-								<td>Empty Bottle:</td>
-								<td><input type="text" name="n1" /></td>
-							</tr>
-							<tr>
-								<td>Alcohol:</td>
-								<td><input type="text" name="n2" /></td>
-							</tr>
-							<tr>
-								<td>Fabric:</td>
-								<td><input type="text" name="n3" /></td>
-							</tr>
-							<tr>
-								<td>Medicine Bowl:</td>
-								<td><input type="text" name="n4" /></td>
-							</tr>
-							
-							<tr>
-								<td>Immortal Heart:</td>
-								<td><input type="text" name="n5" /></td>
-							</tr>
-							<tr>
-								<td>Stem:</td>
-								<td><input type="text" name="n6" /></td>
-							</tr>
-							<tr>
-								<td>Empty Test Tube:</td>
-								<td><input type="text" name="n7" /></td>
-							</tr>
-							<tr>
-								<td>Poison Spore:</td>
-								<td><input type="text" name="n8" /></td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-			</table>
-
-			<input type='submit' name='submit' value='Submit' />
-		</form>
-	</div>
-
-	<div id="footer">
-		Custom Website 2012-2012
-	</div>
-</div>
-
-</body>
-</html>
-
 <?php
+
+session_start();
+include_once 'config.php'; // loads config variables
+include_once 'query.php'; // imports queries
+include_once 'functions.php';
+
+if (!isset($GET_frm_name)) {
+
+include('forms/ad-form.php');
+
+exit();
+}
 
 /*
 Creates 100 Alcohol, 50 Acid Bottle and 50 Bottle Grenade. 
@@ -156,34 +37,30 @@ Empty Test Tube x 1
 Poison Spore x 5
 + Medicine Bowl x 1
 */
-
-// check if submit button was clicked
-if (!isset($_POST["submit"]))
-	exit();
 		  
 $data = array(
 		  // [total # ingredients to purchase, # of ingredients per TA3, 
 		  //  name of ingredient, cost of ingredient, how many in possession]
-          array(1, 200, "Empty Bottle",     6,   $_POST["n1"]),
-		  array(0, 0,   "Alcohol",          0,   $_POST["n2"]),
-		  array(1, 50,  "Fabric",           306, $_POST["n3"]),
-		  array(1, 200, "Medicine Bowl",    8,   $_POST["n4"]),
+          array(1, 200, "Empty Bottle",     6,   $GET_n1),
+		  array(0, 0,   "Alcohol",          0,   $GET_n2),
+		  array(1, 50,  "Fabric",           306, $GET_n3),
+		  array(1, 200, "Medicine Bowl",    8,   $GET_n4),
 		  
-		  array(1, 50,  "Immortal Heart",   374, $_POST["n5"]),	// 4
+		  array(1, 50,  "Immortal Heart",   374, $GET_n5),	// 4
 		  
-		  array(1, 500, "Stem",             46,  $_POST["n6"]),	// 5
-		  array(1, 100, "Empty Test Tube",  3,   $_POST["n7"]),	// 6
-		  array(1, 500, "Poison Spore",     114, $_POST["n8"]),	// 7
+		  array(1, 500, "Stem",             46,  $GET_n6),	// 5
+		  array(1, 100, "Empty Test Tube",  3,   $GET_n7),	// 6
+		  array(1, 500, "Poison Spore",     114, $GET_n8),	// 7
 		);
 		
-$adnum = $_POST["adnum"];
-$per = $_POST["per"];
-$ad_set = $_POST["ad_set"] ? $_POST["ad_set"] : 0;  // default to zero
-$iheart = $_POST["iheart"];
+$adnum = $GET_ad_num;
+$per = $GET_per;
+$ad_set = $GET_ad_set ? $GET_ad_set : 0;  // default to zero
+$iheart = $GET_iheart;
 $isnumeric = "^[0-9]+$";
 $isdecimal = "^([0-9]{1,3}|[0-9]{1,3}.[0-9]{1,2})$";  // 0-100, 000.00-100.00
 
-$skilllvl = $_POST["discountlvl"];
+$skilllvl = $GET_discountlvl;
 $discount = array(0, 7, 9, 11, 13, 15, 17, 19, 21, 23, 24);
 
 // cost of ingredients for alcohol
@@ -287,168 +164,27 @@ foreach ($data as $v) {
 	print $v[0] ." ";
 }*/
 
-format2table($data, $count, $discount, $skilllvl, $ad_set, $total_cost);
+format2table();
 
-$total_cost = 0;
+make_bottles();
 
-/// Calculate how many ingredients you need to buy to make any remaining
-/// AD bottles ie. 1020 % 50 = 20
-
-for ($i=0; $i<5; $i++) {
-	$data[$i][0] = $rem;
-}
-
-// empty bottle + medicine bowl is doubled in amount
-$data[0][0] = $data[3][0] = $rem * 2;
-
-// calculate the cost of any remaining AD
-for ($i=0; $i<5; $i++) {
-	$cost = $data[$i][0] * $data[$i][3];
-	$total_cost += $cost;
-}
-
-print "<table class='txtr' border='1' style='float:left; margin-left: 50px;'>".
-      "<tr>".
-		  "<td>AD (Leftover):</td>".
-		  "<td>$rem</td>".
-	  "</tr>".
-	  "<tr>".
-		  "<td>&nbsp</td>".
-		  "<td>Cost</td>".
-		  "<td>Total Amount</td>".
-		  "<td>Amount To Buy</td>".
-		  "<td>Total Cost</td>".
-	  "</tr>";
-	  
-	  
-for ($i=0; $i<5; $i++) {
-	$tobuy = $data[$i][0] - $data[$i][4];  // = how many to buy in total - how many you already have
-    // $tobuy can be a negative number which means you have excess in ingredients
-    // from twilight that can be used to create any remaining AD
-	if ($tobuy < 0)
-		$tobuy = 0;
-		
-	print "<tr>".
-	      "<td>{$data[$i][2]}</td>
-		   <td>". number_format($data[$i][3]) ."</td>".  // cost per ingredient
-		  "<td>". number_format($data[$i][0]) ."</td>
-		   <td> (". number_format($data[$i][4]) .") ". number_format($tobuy) ."</td>
-		   <td>". number_format($data[$i][0]*$data[$i][3]) ."</td>
-		   </tr>";
-}
-
-print "<tr>".
-      "<td>Total (-$discount[$skilllvl]%):</td>".
-	  "<td>&nbsp</td>".
-	  "<td>&nbsp</td>".
-	  "<td>&nbsp</td>".
-	  "<td>". number_format($total_cost) ."</td>".
-	  "</tr>".
-	  "<tr>".
-      "<td>Total (- Alcohol):</td>".
-	  "<td>&nbsp</td>".
-	  "<td>&nbsp</td>".
-	  "<td>&nbsp</td>".
-	  "<td>". number_format($total_cost - $data[1][0] * $data[1][3]) ."</td>".
-	  "</tr>".
-      "</table>";
-      "</table>";
-
-if ($per == 0)
-	$per = 100;
-$per *= 100;
-
-// get total cost for 1 fire bottle (empty bottle + alcohol + fabric + medicine bowl)
-$totals["fb"][0] = $data[0][3] + $data[1][3] + $data[2][3] + $data[3][3];
-$totals["fb"][1] = (int)($totals["fb"][0] * 10000 / $per);  // calculate adjusted selling price
-	  
-print "<table class='txtr' border='1' style='float:left; margin-left: 100px;'>".
-	  "<tr>".
-		  "<th>Fire Bottle</th>".
-		  "<td>Cost</td>".
-	  "</tr>".
-	  "<tr>".
-	      "<td>{$data[0][2]}</td>".  // empty bottle
-		  "<td>{$data[0][3]}</td>".
-	  "</tr>".
-	  "<tr>".
-	      "<td>{$data[1][2]}</td>".  // alcohol
-		  "<td>{$data[1][3]}</td>".
-	  "</tr>".
-	  "<tr>".
-	      "<td>{$data[2][2]}</td>".  // fabric
-		  "<td>{$data[2][3]}</td>".
-	  "</tr>".
-	  "<tr>".
-	      "<td>{$data[3][2]}</td>".  // medicine bowl
-		  "<td>{$data[3][3]}</td>".
-	  "</tr>".
-	  "<tr>".
-		  "<td>Total Price</td>".
-		  "<td>{$totals["fb"][0]}</td>".
-	  "</tr>".
-	  "<tr>".
-		  "<td>Adjusted Price</td>".
-		  "<td>{$totals["fb"][1]}</td>".
-	  "</tr>".
-	  "<tr>".
-		  "<td>Success Chance (%)</td>".
-		  "<td>". sprintf("%.2f", $per/100) ."</td>".
-	  "</tr>".
-	  "</table>";
-	  
-$totals["ab"][0] = $data[0][3] + $data[4][3] + $data[3][3];
-$totals["ab"][1] = (int)($totals["ab"][0] * 10000 / $per);
-	  
-print "<table class='txtr' border='1' style='float:left; margin-left: 10px;'>".
-	  "<tr>".
-		  "<th>Acid Bottle</th>".
-		  "<td>Cost</td>".
-	  "</tr>".
-	  "<tr>".
-	      "<td>{$data[0][2]}</td>".  // amount of ingredients for 1 acid bottle
-		  "<td>{$data[0][3]}</td>".  // cost per ingredient
-	  "</tr>".
-	  "<tr>".
-	      "<td>{$data[4][2]}</td>".
-		  "<td>{$data[4][3]}</td>".
-	  "</tr>".
-	  "<tr>".
-	      "<td>{$data[3][2]}</td>".
-		  "<td>{$data[3][3]}</td>".
-	  "</tr>".
-	  "<tr>".
-		  "<td>Total Price</td>".
-		  "<td>{$totals["ab"][0]}</td>".
-	  "</tr>".
-	  "<tr>".
-		  "<td>Adjusted Price</td>".
-		  "<td>{$totals["ab"][1]}</td>".
-	  "</tr>".
-	  "<tr>".
-		  "<td>Success Chance (%)</td>".
-		  "<td>". sprintf("%.2f", $per/100) ."</td>".
-	  "</tr>".
-	  "</table>";
-
-function format2table(&$data, $count, $discount, $skilllvl, $ad_set, $total_cost) {
-	global $total_spend;
-	print "<table class='txtr' border='1' style='float:left; margin-left: 200px;'>".
-		  "<tr>".
-			  "<td>Attempts/AD:</td>".
-			  "<td>$count</td>".
-			  "<td>". number_format($count*50) ."</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>&nbsp</td>".
-			  "<td>Cost</td>".
-			  "<td>Total Amount</td>".
-			  "<td>Amount To Buy</td>".
-			  "<td>Total Cost</td>".
-			  "<td>Total Spend</td>".
-		  "</tr>";
-		  
-		  
+function format2table() {
+	foreach ($GLOBALS as $key => $val) { global $$key; }
+	
+	print "
+		<table class='acid'>
+			<tr>
+				<td>Attempts/AD:</td>
+				<td>$count</td>
+				<td>". number_format($count*50) ."</td></tr>
+			<tr>
+			  <td></td>
+			  <td>Cost</td>
+			  <td>Total Amount</td>
+			  <td>Amount To Buy</td>
+			  <td>Total Cost</td>
+			  <td>Total Spend</td></tr>";
+			
 	foreach ($data as &$v) {
 		$bought = $v[4];  // how many of the ingredient you have
 		$tobuy = $v[0] - $v[4];  // how many more of it you need
@@ -500,9 +236,146 @@ function format2table(&$data, $count, $discount, $skilllvl, $ad_set, $total_cost
 
 function format2row($caption, $amount) {
 print "<tr>
-       <td>$caption</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
+       <td>$caption</td><td colspan='3'>&nbsp</td>
 	   <td>". number_format($amount) ."</td>
 	   </tr>";
 }
+
+function make_bottles()
+{
+	foreach ($GLOBALS as $key => $val) { global $$key; }
+	
+	$total_cost = 0;
+
+	/// Calculate how many ingredients you need to buy to make any remaining
+	/// AD bottles ie. 1020 % 50 = 20
+
+	for ($i=0; $i<5; $i++) {
+		$data[$i][0] = $rem;
+	}
+
+	// empty bottle + medicine bowl is doubled in amount
+	$data[0][0] = $data[3][0] = $rem * 2;
+
+	// calculate the cost of any remaining AD
+	for ($i=0; $i<5; $i++) {
+		$cost = $data[$i][0] * $data[$i][3];
+		$total_cost += $cost;
+	}
+
+	print "
+		<table class='acid' style='float: left;'>
+			<tr>
+				<td>AD (Leftover):</td>
+				<td>$rem</td></tr>
+			<tr>
+				<td>&nbsp</td>
+				<td>Cost</td>
+				<td>Total Amount</td>
+				<td>Amount To Buy</td>
+				<td>Total Cost</td>
+			</tr>";
+		  
+		  
+	for ($i=0; $i<5; $i++) {
+		$tobuy = $data[$i][0] - $data[$i][4];  // = how many to buy in total - how many you already have
+		// $tobuy can be a negative number which means you have excess in ingredients
+		// from twilight that can be used to create any remaining AD
+		if ($tobuy < 0)
+			$tobuy = 0;
+			
+		print "
+			<tr>
+				<td>{$data[$i][2]}</td>
+				<td>". number_format($data[$i][3]) ."</td>".  // cost per ingredient
+				"<td>". number_format($data[$i][0]) ."</td>
+				<td> (". number_format($data[$i][4]) .") ". number_format($tobuy) ."</td>
+				<td>". number_format($data[$i][0]*$data[$i][3]) ."</td>
+				</tr>";
+	}
+
+	print "
+		<tr>
+			<td>Total (-$discount[$skilllvl]%):</td>
+			<td colspan='3'>&nbsp</td>
+			<td>". number_format($total_cost) ."</td></tr>
+		<tr>
+			<td>Total (- Alcohol):</td>
+			<td colspan='3'>&nbsp</td>
+			<td>". number_format($total_cost - $data[1][0] * $data[1][3]) ."</td>
+		</tr>
+		</table>";
+
+	if ($per == 0)
+		$per = 100;
+	$per *= 100;
+
+	// get total cost for 1 fire bottle (empty bottle + alcohol + fabric + medicine bowl)
+	$totals["fb"][0] = $data[0][3] + $data[1][3] + $data[2][3] + $data[3][3];
+	$totals["fb"][1] = (int)($totals["fb"][0] * 10000 / $per);  // calculate adjusted selling price
+
+	print "
+		<table class='acid' style='float: left;'>
+		<tr>
+		  <th>Fire Bottle</th>
+		  <td>Cost</td>
+		</tr>";
+	for ($x=0; $x<4; $x++) {
+		print "
+		<tr>
+			<td>{$data[$x][2]}</td>
+			<td>{$data[$x][3]}</td>
+		</tr>";
+	}
+	print "
+		<tr>
+			<td>Total Price</td>
+			<td>{$totals["fb"][0]}</td>
+		</tr>
+		<tr>
+			<td>Adjusted Price</td>
+			<td>{$totals["fb"][1]}</td>
+		</tr>
+		<tr>
+			<td>Success Chance (%)</td>
+			<td>". sprintf("%.2f", $per/100) ."</td>
+		</tr>
+		</table>";
+		  
+	$totals["ab"][0] = $data[0][3] + $data[4][3] + $data[3][3];
+	$totals["ab"][1] = (int)($totals["ab"][0] * 10000 / $per);
+		  
+	print "
+		<table class='acid'>".
+		  "<tr>
+			<th>Acid Bottle</th>
+			<td>Cost</td>
+		</tr>
+		<tr>
+			<td>{$data[0][2]}</td>".  // amount of ingredients
+			"<td>{$data[0][3]}</td>".  // cost of ingredient
+		"</tr>
+		<tr>
+			<td>{$data[4][2]}</td>
+			<td>{$data[4][3]}</td>
+		</tr>
+		<tr>
+			<td>{$data[3][2]}</td>
+			<td>{$data[3][3]}</td>
+		</tr>
+		<tr>
+			<td>Total Price</td>
+			<td>{$totals["ab"][0]}</td>
+		</tr>
+		<tr>
+			<td>Adjusted Price</td>
+			<td>{$totals["ab"][1]}</td>
+		</tr>
+		<tr>
+			<td>Success Chance (%)</td>
+			<td>". sprintf("%.2f", $per/100) ."</td>
+		</tr>
+		</table>";
+	}
 
 ?>
