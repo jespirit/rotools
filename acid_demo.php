@@ -171,22 +171,20 @@ make_bottles();
 function format2table() {
 	foreach ($GLOBALS as $key => $val) { global $$key; }
 	
-	print "<table class='acid'>".
-		  "<tr>".
-			  "<td>Attempts/AD:</td>".
-			  "<td>$count</td>".
-			  "<td>". number_format($count*50) ."</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>&nbsp</td>".
-			  "<td>Cost</td>".
-			  "<td>Total Amount</td>".
-			  "<td>Amount To Buy</td>".
-			  "<td>Total Cost</td>".
-			  "<td>Total Spend</td>".
-		  "</tr>";
-		  
-		  
+	print "
+		<table class='acid'>
+			<tr>
+				<td>Attempts/AD:</td>
+				<td>$count</td>
+				<td>". number_format($count*50) ."</td></tr>
+			<tr>
+			  <td></td>
+			  <td>Cost</td>
+			  <td>Total Amount</td>
+			  <td>Amount To Buy</td>
+			  <td>Total Cost</td>
+			  <td>Total Spend</td></tr>";
+			
 	foreach ($data as &$v) {
 		$bought = $v[4];  // how many of the ingredient you have
 		$tobuy = $v[0] - $v[4];  // how many more of it you need
@@ -238,12 +236,12 @@ function format2table() {
 
 function format2row($caption, $amount) {
 print "<tr>
-       <td>$caption</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
+       <td>$caption</td><td colspan='3'>&nbsp</td>
 	   <td>". number_format($amount) ."</td>
 	   </tr>";
 }
 
-function make_bottles() 
+function make_bottles()
 {
 	foreach ($GLOBALS as $key => $val) { global $$key; }
 	
@@ -265,18 +263,18 @@ function make_bottles()
 		$total_cost += $cost;
 	}
 
-	print "<table class='txtr' border='1' style='float:left; margin-left: 50px;'>".
-		  "<tr>".
-			  "<td>AD (Leftover):</td>".
-			  "<td>$rem</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>&nbsp</td>".
-			  "<td>Cost</td>".
-			  "<td>Total Amount</td>".
-			  "<td>Amount To Buy</td>".
-			  "<td>Total Cost</td>".
-		  "</tr>";
+	print "
+		<table class='acid' style='float: left;'>
+			<tr>
+				<td>AD (Leftover):</td>
+				<td>$rem</td></tr>
+			<tr>
+				<td>&nbsp</td>
+				<td>Cost</td>
+				<td>Total Amount</td>
+				<td>Amount To Buy</td>
+				<td>Total Cost</td>
+			</tr>";
 		  
 		  
 	for ($i=0; $i<5; $i++) {
@@ -286,31 +284,27 @@ function make_bottles()
 		if ($tobuy < 0)
 			$tobuy = 0;
 			
-		print "<tr>".
-			  "<td>{$data[$i][2]}</td>
-			   <td>". number_format($data[$i][3]) ."</td>".  // cost per ingredient
-			  "<td>". number_format($data[$i][0]) ."</td>
-			   <td> (". number_format($data[$i][4]) .") ". number_format($tobuy) ."</td>
-			   <td>". number_format($data[$i][0]*$data[$i][3]) ."</td>
-			   </tr>";
+		print "
+			<tr>
+				<td>{$data[$i][2]}</td>
+				<td>". number_format($data[$i][3]) ."</td>".  // cost per ingredient
+				"<td>". number_format($data[$i][0]) ."</td>
+				<td> (". number_format($data[$i][4]) .") ". number_format($tobuy) ."</td>
+				<td>". number_format($data[$i][0]*$data[$i][3]) ."</td>
+				</tr>";
 	}
 
-	print "<tr>".
-		  "<td>Total (-$discount[$skilllvl]%):</td>".
-		  "<td>&nbsp</td>".
-		  "<td>&nbsp</td>".
-		  "<td>&nbsp</td>".
-		  "<td>". number_format($total_cost) ."</td>".
-		  "</tr>".
-		  "<tr>".
-		  "<td>Total (- Alcohol):</td>".
-		  "<td>&nbsp</td>".
-		  "<td>&nbsp</td>".
-		  "<td>&nbsp</td>".
-		  "<td>". number_format($total_cost - $data[1][0] * $data[1][3]) ."</td>".
-		  "</tr>".
-		  "</table>";
-		  "</table>";
+	print "
+		<tr>
+			<td>Total (-$discount[$skilllvl]%):</td>
+			<td colspan='3'>&nbsp</td>
+			<td>". number_format($total_cost) ."</td></tr>
+		<tr>
+			<td>Total (- Alcohol):</td>
+			<td colspan='3'>&nbsp</td>
+			<td>". number_format($total_cost - $data[1][0] * $data[1][3]) ."</td>
+		</tr>
+		</table>";
 
 	if ($per == 0)
 		$per = 100;
@@ -320,74 +314,68 @@ function make_bottles()
 	$totals["fb"][0] = $data[0][3] + $data[1][3] + $data[2][3] + $data[3][3];
 	$totals["fb"][1] = (int)($totals["fb"][0] * 10000 / $per);  // calculate adjusted selling price
 
-	print "<table class='txtr' border='1' style='float:left; margin-left: 100px;'>".
-		  "<tr>".
-			  "<th>Fire Bottle</th>".
-			  "<td>Cost</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>{$data[0][2]}</td>".  // empty bottle
-			  "<td>{$data[0][3]}</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>{$data[1][2]}</td>".  // alcohol
-			  "<td>{$data[1][3]}</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>{$data[2][2]}</td>".  // fabric
-			  "<td>{$data[2][3]}</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>{$data[3][2]}</td>".  // medicine bowl
-			  "<td>{$data[3][3]}</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>Total Price</td>".
-			  "<td>{$totals["fb"][0]}</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>Adjusted Price</td>".
-			  "<td>{$totals["fb"][1]}</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>Success Chance (%)</td>".
-			  "<td>". sprintf("%.2f", $per/100) ."</td>".
-		  "</tr>".
-		  "</table>";
+	print "
+		<table class='acid' style='float: left;'>
+		<tr>
+		  <th>Fire Bottle</th>
+		  <td>Cost</td>
+		</tr>";
+	for ($x=0; $x<4; $x++) {
+		print "
+		<tr>
+			<td>{$data[$x][2]}</td>
+			<td>{$data[$x][3]}</td>
+		</tr>";
+	}
+	print "
+		<tr>
+			<td>Total Price</td>
+			<td>{$totals["fb"][0]}</td>
+		</tr>
+		<tr>
+			<td>Adjusted Price</td>
+			<td>{$totals["fb"][1]}</td>
+		</tr>
+		<tr>
+			<td>Success Chance (%)</td>
+			<td>". sprintf("%.2f", $per/100) ."</td>
+		</tr>
+		</table>";
 		  
 	$totals["ab"][0] = $data[0][3] + $data[4][3] + $data[3][3];
 	$totals["ab"][1] = (int)($totals["ab"][0] * 10000 / $per);
 		  
-	print "<table class='txtr' border='1' style='float:left; margin-left: 10px;'>".
-		  "<tr>".
-			  "<th>Acid Bottle</th>".
-			  "<td>Cost</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>{$data[0][2]}</td>".  // amount of ingredients for 1 acid bottle
-			  "<td>{$data[0][3]}</td>".  // cost per ingredient
-		  "</tr>".
-		  "<tr>".
-			  "<td>{$data[4][2]}</td>".
-			  "<td>{$data[4][3]}</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>{$data[3][2]}</td>".
-			  "<td>{$data[3][3]}</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>Total Price</td>".
-			  "<td>{$totals["ab"][0]}</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>Adjusted Price</td>".
-			  "<td>{$totals["ab"][1]}</td>".
-		  "</tr>".
-		  "<tr>".
-			  "<td>Success Chance (%)</td>".
-			  "<td>". sprintf("%.2f", $per/100) ."</td>".
-		  "</tr>".
-		  "</table>";
+	print "
+		<table class='acid'>".
+		  "<tr>
+			<th>Acid Bottle</th>
+			<td>Cost</td>
+		</tr>
+		<tr>
+			<td>{$data[0][2]}</td>".  // amount of ingredients
+			"<td>{$data[0][3]}</td>".  // cost of ingredient
+		"</tr>
+		<tr>
+			<td>{$data[4][2]}</td>
+			<td>{$data[4][3]}</td>
+		</tr>
+		<tr>
+			<td>{$data[3][2]}</td>
+			<td>{$data[3][3]}</td>
+		</tr>
+		<tr>
+			<td>Total Price</td>
+			<td>{$totals["ab"][0]}</td>
+		</tr>
+		<tr>
+			<td>Adjusted Price</td>
+			<td>{$totals["ab"][1]}</td>
+		</tr>
+		<tr>
+			<td>Success Chance (%)</td>
+			<td>". sprintf("%.2f", $per/100) ."</td>
+		</tr>
+		</table>";
 	}
 
 ?>
