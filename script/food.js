@@ -10,6 +10,9 @@ foodopt.appendChild(opt);
 }
 */
 
+// 4 kits: min,avg,max
+var make_per = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
+
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -97,6 +100,7 @@ function update_list() {
 			<td><input type='text' name='"+ing_field+"' value='"+ ing['price'] + "'></td> \
 		</tr>";
 	}
+	// TODO: Save price of ingredients for later use.
 	str += "</table>";
 	
 	$("#food").find("#ingredients").remove();
@@ -117,7 +121,6 @@ with(document.getElementById("food")){
 	var bless_check = Blessing.checked;
 	var gloria_check = Gloria.checked;
 	var gospel_check = Gospel.checked;
-	var make_per = [0,0,0];  // min,avg,max
 	var out = document.getElementById("output");
 	var str = "<table border='1'>";
 	
@@ -133,7 +136,7 @@ with(document.getElementById("food")){
 	
 	var i,j;
 	for (i=0; i<4; i++) {
-		make_per[0] = 1200 * (cooking_set[i] - 10)
+		make_per[i][0] = 1200 * (cooking_set[i] - 10)
 					  + 20 * (base_level + 1)
 				      + 20 * (dex + 1)
 				      + 100 * (0 + 6 + Math.floor(cook_exp/80))  // rand=0
@@ -141,7 +144,7 @@ with(document.getElementById("food")){
 					  - 10 * (100 - luk + 1)
 					  - 500 * (num_ing - 1)
 					  - 100 * 4;  // rand=4
-		make_per[2] = 1200 * (cooking_set[i] - 10)
+		make_per[i][2] = 1200 * (cooking_set[i] - 10)
 					  + 20 * (base_level + 1)
 				      + 20 * (dex + 1)
 				      + 100 * (23 + 6 + Math.floor(cook_exp/80))  // rand=23
@@ -151,15 +154,15 @@ with(document.getElementById("food")){
 					  - 100 * 1;  // rand=1
 		
 		for (j=0; j<3; j++) {
-			if (make_per[j] > 10000)
-				make_per[j] = 10000;
+			if (make_per[i][j] > 10000)
+				make_per[i][j] = 10000;
 		}
 		
-		make_per[1] = Math.floor((make_per[0] + make_per[2])/2);
+		make_per[i][1] = Math.floor((make_per[i][0] + make_per[i][2])/2);
 		
 		str += "<tr><td>" + kits[i] + " Cooking Kit</td>";
 		for (j=0; j<3; j++) {
-			str += "<td>" + (make_per[j]/100).toFixed(2) + "%</td>";
+			str += "<td>" + (make_per[i][j]/100).toFixed(2) + "%</td>";
 		}
 		str += "</tr>";
 	}
@@ -182,8 +185,9 @@ with(document.food){
 	var cook_exp = parseInt(CookExp.value);
 	var qty = parseInt(Qty.value);
 	var gospel_check = Gospel.checked;
+	var kit_type = $("input[name=KitType]:checked").val();
 	var kit_cost = parseInt(KitCost.value);
-	var make_per;
+	var per;
 	var out = document.getElementById("makefood");
 	var str = "";
 	
@@ -196,8 +200,8 @@ with(document.food){
 	
 	var field;
 	var i,total=0,success=0,failed=0;
-	var chance;
-	var item,price;
+	var chance, price;
+	var sell;
 	
 	total = kit_cost;
 	for (i=0; i<num_ing; i++) {
@@ -206,20 +210,22 @@ with(document.food){
 		total += price * food[stat][food_level-1]["ing"][i]["amount"];
 	}
 	
-	item = total;
-	str += "Total (1): " + format_num(item) + "<br/>";
+	sell = total / (make_per[kit_type][1] / 10000);
+	
+	str += "Total (1): " + format_num(total) + "<br/>"
+		+ "Selling Price: " + format_num(parseInt(sell)) + "<br/>";
 	
 	for (i=0; i<qty; i++) {
-		make_per = 1200 * (cooking_set[3] - 10)
-				   + 20 * (base_level + 1)
-				   + 20 * (dex + 1)
-				   + 100 * (getRandomInt(0,23) + 6 + Math.floor(cook_exp/80))
-				   - 400 * (food_level+10 - 11 + 1)
-				   - 10 * (100 - luk + 1)
-				   - 500 * (num_ing - 1)
-				   - 100 * getRandomInt(1,4);
+		per = 1200 * (cooking_set[kit_type] - 10)
+			+ 20 * (base_level + 1)
+			+ 20 * (dex + 1)
+			+ 100 * (getRandomInt(0,23) + 6 + Math.floor(cook_exp/80))
+			- 400 * (food_level+10 - 11 + 1)
+			- 10 * (100 - luk + 1)
+			- 500 * (num_ing - 1)
+			- 100 * getRandomInt(1,4);
 		
-		if (getRandomInt(0,10000-1)<make_per) {
+		if (getRandomInt(0,10000-1)<per) {
 			success++;
 			str += "Success! You made Level " + food_level + " " + stat + "<br/>";
 		}
@@ -234,7 +240,7 @@ with(document.food){
 		+  "You failed to create " + failed + " which costs you " + format_num(total*failed) + "<br/>";
 		
 	chance = success / qty;
-	str += "You need to charge " + format_num(Math.floor(item / chance)) + " to make back the money you spent<br/>";
+	str += "You need to charge " + format_num(Math.floor(total / chance)) + " to make back the money you spent<br/>";
 		
 	out.innerHTML = str;
 }}
