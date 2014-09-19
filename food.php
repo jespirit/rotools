@@ -11,12 +11,19 @@
 	<div>Gospel: <input type="checkbox" name="Gospel" onchange="calc()"></input></div>
 	
 	<div>How many? <input type="text" name="Qty" onkeyup="update_amounts()"></input></div>
+	<div>
+		Cooking Kit: <br>
+		<input type="radio" name="KitType" value="0"></input>Outdoor<br>
+		<input type="radio" name="KitType" value="1"></input>Home<br>
+		<input type="radio" name="KitType" value="2"></input>Professional<br>
+		<input type="radio" name="KitType" value="3" checked="checked"></input>Royal<br>
+	</div>
 	<div>Kit (Zeny) <input type="text" name="KitCost"></input></div>
 	<div><input type="button" onclick="makefood()" value="Make"></input></div>
 </form>
 <div id="output"></div>
 <div id="makefood"></div>
-<script src="/php/script/food.js"></script>
+<script src="script/food.js"></script>
 <script>
 	var xmlhttp = new XMLHttpRequest();
 	var url = "get-food.php";
