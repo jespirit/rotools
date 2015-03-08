@@ -17,6 +17,17 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function nan2zero(val) {
+    if (isNaN(val))
+        return 0;
+    else
+        return val;
+}
+
+function float2int(val) {
+    return val | 0;
+}
+
 /* 	Format a number using the thousands separator.
  */
 function format_num(num){
@@ -111,6 +122,7 @@ function calc() {
 with(document.getElementById("food")){
 	var cooking_set = new Array(11,12,13,14,15);
 	var kits = ["Outdoor", "Home", "Professional", "Royal"];
+	var kit_type = $("input[name=KitType]:checked").val();
 	var food_type = FoodType.value;
 	var food_level = parseInt(FoodLv.value);
 	var base_level = parseInt(BaseLv.value);
@@ -122,7 +134,19 @@ with(document.getElementById("food")){
 	var gloria_check = Gloria.checked;
 	var gospel_check = Gospel.checked;
 	var out = document.getElementById("output");
-	var str = "<table border='1'>";
+	var str = "	<table border='1'> \
+				<tr> \
+					<th>Cooking Kit</td> \
+					<th>Min</td> \
+					<th>Avg</td> \
+					<th>Max</td> \
+				</tr>";
+                
+    food_level = nan2zero(food_level);
+    base_level = nan2zero(base_level);
+    dex = nan2zero(dex);
+    luk = nan2zero(luk);
+    cook_exp = nan2zero(cook_exp);
 	
 	if (bless_check)
 		dex += 10;
@@ -160,7 +184,11 @@ with(document.getElementById("food")){
 		
 		make_per[i][1] = Math.floor((make_per[i][0] + make_per[i][2])/2);
 		
-		str += "<tr><td>" + kits[i] + " Cooking Kit</td>";
+		if (i == kit_type)  // Highlight the row in yellow
+			str += "<tr style='background-color: #ffff0f'><td>" + kits[i] + "</td>";
+		else
+			str += "<tr><td>" + kits[i] + "</td>";
+			
 		for (j=0; j<3; j++) {
 			str += "<td>" + (make_per[i][j]/100).toFixed(2) + "%</td>";
 		}
@@ -190,6 +218,13 @@ with(document.food){
 	var per;
 	var out = document.getElementById("makefood");
 	var str = "";
+    
+    food_level = nan2zero(food_level);
+    base_level = nan2zero(base_level);
+    dex = nan2zero(dex);
+    luk = nan2zero(luk);
+    cook_exp = nan2zero(cook_exp);
+    kit_cost = nan2zero(kit_cost);
 	
 	qty = (/^[0-9]+/.test(qty)) ? qty : 0;
 	
@@ -210,10 +245,10 @@ with(document.food){
 		total += price * food[stat][food_level-1]["ing"][i]["amount"];
 	}
 	
-	sell = total / (make_per[kit_type][1] / 10000);
+	sell = float2int(total / (make_per[kit_type][1] / 10000));
 	
 	str += "Total (1): " + format_num(total) + "<br/>"
-		+ "Selling Price: " + format_num(parseInt(sell)) + "<br/>";
+		+ "Selling Price: " + format_num(sell) + "<br/>";
 	
 	for (i=0; i<qty; i++) {
 		per = 1200 * (cooking_set[kit_type] - 10)
