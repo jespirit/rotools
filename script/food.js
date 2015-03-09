@@ -12,6 +12,7 @@ foodopt.appendChild(opt);
 
 // 4 kits: min,avg,max
 var make_per = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
+var make_limit = 10000;
 
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -81,6 +82,10 @@ with(document.food) {
 	var food_type = FoodType.value;
 	var food_level = parseInt(FoodLv.value);
 	var num_ing = food[food_type][food_level-1]["ing"].length;
+    
+    qty = (/^[0-9]+/.test(qty)) ? qty : 0;
+    if (qty > make_limit)
+        qty = make_limit;
 	
 	var i, amount;
 	for (i=0; i<num_ing; i++) {
@@ -159,6 +164,7 @@ with(document.getElementById("food")){
 	}
 	
 	var i,j;
+    var max_variation = 30 + 5*(Math.floor(cook_exp/400)) - (6 + Math.floor(cook_exp/80)) - 1;
 	for (i=0; i<4; i++) {
 		make_per[i][0] = 1200 * (cooking_set[i] - 10)
 					  + 20 * (base_level + 1)
@@ -168,10 +174,18 @@ with(document.getElementById("food")){
 					  - 10 * (100 - luk + 1)
 					  - 500 * (num_ing - 1)
 					  - 100 * 4;  // rand=4
+        make_per[i][1] = 1200 * (cooking_set[i] - 10)
+					  + 20 * (base_level + 1)
+				      + 20 * (dex + 1)
+				      + 100 * (max_variation/2 + 6 + Math.floor(cook_exp/80))  // max variation halved
+					  - 400 * (food_level+10 - 11 + 1)
+					  - 10 * (100 - luk + 1)
+					  - 500 * (num_ing - 1)
+					  - 100 * 2;  // rand=2
 		make_per[i][2] = 1200 * (cooking_set[i] - 10)
 					  + 20 * (base_level + 1)
 				      + 20 * (dex + 1)
-				      + 100 * (23 + 6 + Math.floor(cook_exp/80))  // rand=23
+				      + 100 * (max_variation + 6 + Math.floor(cook_exp/80))  // max variation
 					  - 400 * (food_level+10 - 11 + 1)
 					  - 10 * (100 - luk + 1)
 					  - 500 * (num_ing - 1)
@@ -182,7 +196,7 @@ with(document.getElementById("food")){
 				make_per[i][j] = 10000;
 		}
 		
-		make_per[i][1] = Math.floor((make_per[i][0] + make_per[i][2])/2);
+		//make_per[i][1] = Math.floor((make_per[i][0] + make_per[i][2])/2);
 		
 		if (i == kit_type)  // Highlight the row in yellow
 			str += "<tr style='background-color: #ffff0f'><td>" + kits[i] + "</td>";
@@ -227,6 +241,8 @@ with(document.food){
     kit_cost = nan2zero(kit_cost);
 	
 	qty = (/^[0-9]+/.test(qty)) ? qty : 0;
+    if (qty > make_limit)
+        qty = make_limit;
 	
 	if (gospel_check) {
 		dex += 20;
