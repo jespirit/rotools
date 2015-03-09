@@ -2,7 +2,7 @@
 <form id="food" name="food">
 	<div>Food Type: <select name="FoodType" onchange="calc(); update_list();"></select></div>
 	<div>Level of Food: <select name="FoodLv" onchange="calc(); update_list();"></select></div>
-	<div>Base Level: <select name="BaseLv" onkeyup="calc()"></select></div>
+	<div>Base Level: <select name="BaseLv" onchange="calc()"></select></div>
 	<div>DEX: <input type="text" name="Dex" onkeyup="calc()"></input></div>
 	<div>LUK: <input type="text" name="Luk" onkeyup="calc()"></input></div>
 	<div>Cooking Experience: <input type="text" name="CookExp" onkeyup="calc()"></input></div>

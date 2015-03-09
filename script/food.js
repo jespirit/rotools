@@ -74,6 +74,10 @@ with (document.food) {
 	for (i=1; i<=99; i++) {
 		BaseLv.options[i-1] = new Option(i, i);
 	}
+    
+    // Show table and food ingredients
+    calc();
+    update_list();
 }
 
 function update_amounts() {
